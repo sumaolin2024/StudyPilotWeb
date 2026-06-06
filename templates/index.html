@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block title %}首页 - StudyPilot Web{% endblock %}
+{% block content %}
+<div class="text-center py-5">
+  <h1 class="display-5">欢迎来到 StudyPilot Web</h1>
+  <p class="lead">基于 Flask 的大学生学习管理平台，支持任务管理、AI 刷题与学习统计。</p>
+  {% if g.user %}
+  <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+    <a class="btn btn-primary btn-lg" href="{{ url_for('tasks.task_list') }}">管理任务</a>
+    <a class="btn btn-outline-primary btn-lg" href="{{ url_for('quiz.quiz') }}">开始刷题</a>
+  </div>
+  {% else %}
+  <a class="btn btn-primary btn-lg" href="{{ url_for('auth.login') }}">立即登录</a>
+  {% endif %}
+</div>
+<div class="row gy-4">
+  <div class="col-md-4">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h5 class="card-title">任务系统</h5>
+        <p class="card-text">添加学习任务、标记完成、删除任务，帮助你安排日常学习。</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h5 class="card-title">AI 刷题</h5>
+        <p class="card-text">输入课程名即可生成选择题、判断题、填空题，并实时评分。</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h5 class="card-title">学习统计</h5>
+        <p class="card-text">通过图表查看任务完成率与刷题成绩，形成学习趋势分析。</p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

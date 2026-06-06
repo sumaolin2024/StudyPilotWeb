@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% block title %}AI 刷题 - StudyPilot Web{% endblock %}
+{% block content %}
+<div class="row">
+  <div class="col-lg-8 mx-auto">
+    <div class="card shadow-sm mb-4">
+      <div class="card-body">
+        <h3 class="card-title mb-3">AI 刷题系统</h3>
+        {% if not generated and not results %}
+        <form method="post" class="mb-4">
+          <input type="hidden" name="mode" value="generate">
+          <div class="mb-3">
+            <label for="subject" class="form-label">课程名称</label>
+            <input type="text" class="form-control" id="subject" name="subject" placeholder="例如：高等数学" required>
+          </div>
+          <button type="submit" class="btn btn-primary">生成题目</button>
+        </form>
+        {% endif %}
+
+        {% if generated %}
+        <form method="post">
+          <input type="hidden" name="mode" value="submit">
+          <input type="hidden" name="subject" value="{{ subject }}">
+          <input type="hidden" name="questions" value='{{ serialized|tojson|safe }}'>
+          <h5 class="mb-3">{{ subject }} 题目</h5>
+          {% for question in questions %}
+          <div class="mb-4">
+            <p class="mb-2"><strong>{{ loop.index }}. {{ question.prompt }}</strong></p>
+            {% if question.type == 'choice' %}
+            {% for option in question.options %}
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="answer_{{ loop.parent.index }}" id="option_{{ loop.parent.index }}_{{ loop.index }}" value="{{ option }}" required>
+              <label class="form-check-label" for="option_{{ loop.parent.index }}_{{ loop.index }}">{{ option }}</label>
+            </div>
+            {% endfor %}
+            {% elif question.type == 'judge' %}
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="answer_{{ loop.index }}" id="judge_true_{{ loop.index }}" value="正确" required>
+              <label class="form-check-label" for="judge_true_{{ loop.index }}">正确</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="answer_{{ loop.index }}" id="judge_false_{{ loop.index }}" value="错误" required>
+              <label class="form-check-label" for="judge_false_{{ loop.index }}">错误</label>
+            </div>
+            {% else %}
+            <input type="text" class="form-control" name="answer_{{ loop.index }}" required>
+            {% endif %}
+          </div>
+          {% endfor %}
+          <button type="submit" class="btn btn-success">提交答案</button>
+        </form>
+        {% endif %}
+
+        {% if results %}
+        <div class="alert alert-info">您的得分：{{ score }} / {{ total }}</div>
+        <div class="list-group">
+          {% for item in results %}
+          <div class="list-group-item">
+            <div class="d-flex justify-content-between">
+              <strong>{{ item.index }}. {{ item.prompt }}</strong>
+              <span class="badge bg-{{ 'success' if item.passed else 'danger' }}">{{ '正确' if item.passed else '错误' }}</span>
+            </div>
+            <div class="mt-2">
+              <div>您的答案：{{ item.user_answer }}</div>
+              <div>标准答案：{{ item.correct_answer }}</div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        <a href="{{ url_for('quiz.quiz') }}" class="btn btn-primary mt-4">继续刷题</a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

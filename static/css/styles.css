@@ -1,0 +1,15 @@
+body {
+  background: #f8f9fa;
+}
+
+.navbar-brand {
+  letter-spacing: 0.05em;
+}
+
+.stat-card {
+  min-height: 140px;
+}
+
+.card {
+  border: none;
+}
