@@ -1,50 +1,36 @@
-import os
+from flask import Flask, render_template
 
-from flask import Flask, g, render_template, session
+app = Flask(__name__)
 
-from routes.auth import auth_bp
-from routes.quiz import quiz_bp
-from routes.stats import stats_bp
-from routes.tasks import tasks_bp
-from utils.db import close_db, get_db, init_app
+# 首页
+@app.route("/")
+def home():
+    return render_template("index.html")
 
+# 登录页
+@app.route("/login")
+def login():
+    return render_template("login.html")
 
-def create_app() -> Flask:
-    app = Flask(__name__, template_folder="templates", static_folder="static")
-    app.config.from_mapping(
-        SECRET_KEY="study_pilot_secure_key",
-        DATABASE=os.path.join(app.instance_path, "study_pilot.db"),
-    )
+# 注册页
+@app.route("/register")
+def register():
+    return render_template("register.html")
 
-    os.makedirs(app.instance_path, exist_ok=True)
-    init_app(app)
+# 任务页
+@app.route("/tasks")
+def tasks():
+    return render_template("tasks.html")
 
-    app.register_blueprint(auth_bp, url_prefix="/auth")
-    app.register_blueprint(tasks_bp, url_prefix="/tasks")
-    app.register_blueprint(quiz_bp, url_prefix="/quiz")
-    app.register_blueprint(stats_bp, url_prefix="/stats")
+# 刷题页
+@app.route("/quiz")
+def quiz():
+    return render_template("quiz.html")
 
-    @app.before_request
-    def load_logged_in_user() -> None:
-        user_id = session.get("user_id")
-        g.user = None
-
-        if user_id is not None:
-            db = get_db()
-            g.user = db.execute(
-                "SELECT id, username FROM users WHERE id = ?", (user_id,)
-            ).fetchone()
-
-    @app.teardown_appcontext
-    def teardown_db(exc):
-        close_db(exc)
-
-    @app.route("/")
-    def index():
-        return render_template("index.html")
-
-    return app
-
+# 统计页
+@app.route("/statistics")
+def statistics():
+    return render_template("statistics.html")
 
 if __name__ == "__main__":
-    create_app().run(debug=True)
+    app.run(host="0.0.0.0", port=5000, debug=True)
