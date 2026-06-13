@@ -1,0 +1,214 @@
+{% extends 'base.html' %}
+{% block title %}背诵卡片 - StudyPilot Web{% endblock %}
+{% block content %}
+<div class="mb-4">
+  <h2 class="mb-2">CS 八股文背诵卡片</h2>
+  <p class="text-muted">共 <strong>{{ cards|length }}</strong> 张卡片，覆盖 <strong>{{ categories|length }}</strong> 个领域。点击卡片翻转查看解释。</p>
+</div>
+
+<!-- 分类筛选 -->
+<div class="mb-4">
+  <button class="btn btn-outline-primary btn-sm me-2 mb-1 filter-btn active" data-cat="all">全部 ({{ cards|length }})</button>
+  {% for cat, count in categories.items() %}
+  <button class="btn btn-outline-primary btn-sm me-2 mb-1 filter-btn" data-cat="{{ cat }}">{{ cat }} ({{ count }})</button>
+  {% endfor %}
+</div>
+
+<!-- 进度条 -->
+<div class="d-flex align-items-center mb-3">
+  <span id="progress-text" class="text-muted me-2">已翻: 0/{{ cards|length }}</span>
+  <div class="progress flex-grow-1" style="height: 8px;">
+    <div id="progress-bar" class="progress-bar" role="progressbar" style="width: 0%"></div>
+  </div>
+</div>
+
+<!-- 卡片网格 -->
+<div class="row" id="card-grid">
+  {% for card in cards %}
+  <div class="col-lg-3 col-md-4 col-sm-6 mb-3 card-wrapper" data-cat="{{ card.category }}">
+    <div class="flashcard" onclick="flipCard(this)" data-flipped="false">
+      <div class="flashcard-inner">
+        <div class="flashcard-front">
+          <span class="badge bg-primary mb-2">{{ card.category }}</span>
+          <div class="flashcard-term">{{ card.term }}</div>
+          <small class="text-muted mt-2 d-block">点击翻转查看解释</small>
+        </div>
+        <div class="flashcard-back">
+          <span class="badge bg-success mb-2">{{ card.category }}</span>
+          <div class="flashcard-explanation">{{ card.explanation }}</div>
+          <div class="flashcard-example">
+            <strong>举例：</strong>{{ card.example }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+<!-- 底部操作 -->
+<div class="text-center mt-4">
+  <button class="btn btn-outline-secondary me-2" onclick="resetAll()">重置所有卡片</button>
+  <button class="btn btn-outline-secondary me-2" onclick="flipAll()">全部翻转</button>
+  <button class="btn btn-primary" onclick="randomCard()">随机一张</button>
+</div>
+
+<style>
+  .flashcard {
+    perspective: 1000px;
+    cursor: pointer;
+    height: 260px;
+  }
+  .flashcard-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.5s;
+    transform-style: preserve-3d;
+  }
+  .flashcard.flipped .flashcard-inner {
+    transform: rotateY(180deg);
+  }
+  .flashcard-front, .flashcard-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    border: 1px solid #dee2e6;
+    overflow-y: auto;
+  }
+  .flashcard-front {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+  }
+  .flashcard-front .badge {
+    font-size: 0.7rem;
+  }
+  .flashcard-term {
+    font-size: 1.15rem;
+    font-weight: 700;
+    line-height: 1.4;
+  }
+  .flashcard-front small {
+    color: rgba(255,255,255,0.7) !important;
+    font-size: 0.7rem;
+  }
+  .flashcard-back {
+    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+    color: white;
+    transform: rotateY(180deg);
+    justify-content: flex-start;
+    text-align: left;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    padding: 14px;
+  }
+  .flashcard-back .badge {
+    align-self: center;
+    margin-bottom: 8px;
+  }
+  .flashcard-explanation {
+    margin-bottom: 8px;
+    font-weight: 500;
+  }
+  .flashcard-example {
+    background: rgba(255,255,255,0.2);
+    border-radius: 6px;
+    padding: 8px;
+    font-size: 0.8rem;
+    width: 100%;
+  }
+  .flashcard-example strong {
+    display: block;
+    margin-bottom: 3px;
+  }
+  .filter-btn.active {
+    background-color: #0d6efd;
+    color: white;
+  }
+</style>
+
+<script>
+  let flippedCount = 0;
+  const total = {{ cards|length }};
+
+  function flipCard(el) {
+    const wasFlipped = el.dataset.flipped === 'true';
+    el.classList.toggle('flipped');
+    el.dataset.flipped = wasFlipped ? 'false' : 'true';
+    if (wasFlipped) flippedCount--;
+    else flippedCount++;
+    updateProgress();
+  }
+
+  function updateProgress() {
+    document.getElementById('progress-text').textContent = `已翻: ${flippedCount}/${total}`;
+    const pct = (flippedCount / total * 100).toFixed(0);
+    document.getElementById('progress-bar').style.width = pct + '%';
+  }
+
+  function resetAll() {
+    document.querySelectorAll('.flashcard').forEach(c => {
+      c.classList.remove('flipped');
+      c.dataset.flipped = 'false';
+    });
+    flippedCount = 0;
+    updateProgress();
+  }
+
+  function flipAll() {
+    const all = document.querySelectorAll('.card-wrapper:not(.d-none) .flashcard');
+    const allFlipped = flippedCount >= all.length;
+    all.forEach(c => {
+      if (allFlipped) {
+        c.classList.remove('flipped');
+        c.dataset.flipped = 'false';
+      } else {
+        c.classList.add('flipped');
+        c.dataset.flipped = 'true';
+      }
+    });
+    flippedCount = allFlipped ? 0 : all.length;
+    updateProgress();
+  }
+
+  function randomCard() {
+    const visible = document.querySelectorAll('.card-wrapper:not(.d-none) .flashcard');
+    if (visible.length === 0) return;
+    const idx = Math.floor(Math.random() * visible.length);
+    visible[idx].scrollIntoView({ behavior: 'smooth', block: 'center' });
+    if (visible[idx].dataset.flipped !== 'true') {
+      flipCard(visible[idx]);
+    }
+  }
+
+  // 分类筛选
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      this.classList.add('active');
+      const cat = this.dataset.cat;
+      document.querySelectorAll('.card-wrapper').forEach(w => {
+        if (cat === 'all' || w.dataset.cat === cat) {
+          w.classList.remove('d-none');
+        } else {
+          w.classList.add('d-none');
+        }
+      });
+      // 重新计算可见卡片中的翻转数
+      flippedCount = 0;
+      document.querySelectorAll('.card-wrapper:not(.d-none) .flashcard').forEach(c => {
+        if (c.dataset.flipped === 'true') flippedCount++;
+      });
+      updateProgress();
+    });
+  });
+</script>
+{% endblock %}

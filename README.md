@@ -1,66 +1,60 @@
 # StudyPilot Web
 
-StudyPilot Web 是一个面向大学生的学习管理平台，基于 Flask 构建，支持登录注册、任务管理、AI 刷题和学习统计。
+基于 Flask 的大学生学管理 Web 平台，支持任务管理、AI 刷题、学习统计与 CS 八股文背诵卡片。
 
-## 功能介绍
+## 功能
 
-- 登录 / 注册系统
-- 学习任务管理：添加、删除、标记完成
-- AI 刷题系统：自动生成选择题、判断题、填空题，并自动评分
-- 数据统计系统：使用 matplotlib 可视化完成率与刷题成绩
-- Bootstrap5 响应式前端界面
+- **任务管理**：添加/删除/标记完成学任务
+- **AI 刷题**：输入课程名生成选择题、判断题、填空题
+- **学统计**：任务完成率与刷题成绩可视化
+- **背诵卡片**：35张 CS 八股文卡片，6大领域，点击翻转查看解释
 
-## 技术栈
+## 背诵卡片模块
 
-- Python 3.14
-- Flask
-- SQLite
-- Bootstrap5
-- Jinja2
-- matplotlib
+覆盖 6 大 CS 核心领域，点击卡片即可翻转查看解释和举例：
 
-## 安装方法
+| 分类 | 卡片数 | 内容 |
+|------|--------|------|
+| 数据结构 | 6 | 数组、链表、栈、队列、哈希表、二叉树 |
+| 算法 | 6 | O(n)/O(1)/O(n^2)、二分查找、DP、递归 |
+| 操作系统 | 5 | 进程、线程、死锁、虚拟内存、上下文切换 |
+| 计算机网络 | 6 | TCP握手/挥手、HTTP/HTTPS、DNS、OSI、GET/POST |
+| 数据库 | 5 | ACID、索引、JOIN、SQL vs NoSQL、Redis |
+| 编程基础 | 7 | OOP、单例/工厂、栈/堆、编译/解释、Git、REST |
 
-1. 进入项目目录：
-
-```bash
-cd StudyPilotWeb
-```
-
-2. 创建虚拟环境并激活：
-
-```bash
-python -m venv venv
-venv\Scripts\activate
-```
-
-3. 安装依赖：
+## 安装与运行
 
 ```bash
 pip install -r requirements.txt
+python app.py
 ```
 
-## 运行方法
+访问 http://localhost:5000
 
-```bash
-py app.py
-```
+## 技术栈
 
-打开浏览器访问：
-
-```text
-http://127.0.0.1:5000
-```
+- Python 3 / Flask
+- Bootstrap 5
+- HTML5 / CSS3 / JavaScript
 
 ## 项目结构
 
-- `app.py`：应用入口
-- `routes/`：路由视图模块
-- `utils/`：数据库、题库与统计工具
-- `templates/`：页面模板
-- `static/`：静态资源
-
-## 注意事项
-
-- 初次运行后，SQLite 数据库文件会自动创建在 `instance/study_pilot.db`
-- 生成的统计图保存在 `static/plots/`
+```
+StudyPilotWeb/
+├── app.py                  # Flask 入口
+├── requirements.txt        # 依赖
+├── utils/                  # 工具模块
+│   ├── flashcard.py        # 背诵卡片数据
+│   ├── db.py               # 数据库
+│   ├── quiz_generator.py   # 刷题生成
+│   └── stats.py            # 统计
+├── routes/                 # 路由蓝图
+├── templates/              # Jinja2 模板
+│   ├── base.html           # 基础布局
+│   ├── index.html          # 首页
+│   ├── flashcard.html      # 背诵卡片页
+│   ├── tasks.html          # 任务页
+│   ├── quiz.html           # 刷题页
+│   └── stats.html          # 统计页
+└── static/                 # 静态资源
+```
