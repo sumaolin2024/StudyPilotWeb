@@ -9,8 +9,6 @@
 
 ## 背诵卡片模块
 
-覆盖 6 大 CS 核心领域，点击卡片即可翻转查看解释和举例：
-
 | 分类 | 卡片数 | 内容 |
 |------|--------|------|
 | 数据结构 | 6 | 数组、链表、栈、队列、哈希表、二叉树 |
@@ -33,26 +31,3 @@ python app.py
 
 - Python 3 / Flask
 - Bootstrap 5
-- HTML5 / CSS3 / JavaScript
-
-## 项目结构
-
-```
-StudyPilotWeb/
-├── app.py                  # Flask 入口
-├── requirements.txt        # 依赖
-├── utils/                  # 工具模块
-│   ├── flashcard.py        # 背诵卡片数据
-│   ├── db.py               # 数据库
-│   ├── quiz_generator.py   # 刷题生成
-│   └── auth.py             # 认证
-├── routes/                 # 路由蓝图
-├── templates/              # Jinja2 模板
-│   ├── base.html           # 基础布局
-│   ├── index.html          # 首页
-│   ├── flashcard.html      # 背诵卡片页
-│   ├── quiz.html           # 刷题页
-│   ├── login.html          # 登录页
-│   └── register.html       # 注册页
-└── static/                 # 静态资源
-```

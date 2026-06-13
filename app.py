@@ -3,27 +3,14 @@ from utils.flashcard import get_cards_by_category, get_categories
 
 app = Flask(__name__)
 
-# 首页
 @app.route("/")
 def home():
     return render_template("index.html")
 
-# 登录页
-@app.route("/login")
-def login():
-    return render_template("login.html")
-
-# 注册页
-@app.route("/register")
-def register():
-    return render_template("register.html")
-
-# 刷题页
 @app.route("/quiz")
 def quiz():
     return render_template("quiz.html")
 
-# 背诵卡片页
 @app.route("/flashcard")
 @app.route("/flashcard/<category>")
 def flashcard(category=None):
