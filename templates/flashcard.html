@@ -1,214 +1,961 @@
 {% extends 'base.html' %}
-{% block title %}背诵卡片 - StudyPilot Web{% endblock %}
+
+{% block title %}背诵卡片 – StudyPilot{% endblock %}
+
 {% block content %}
-<div class="mb-4">
-  <h2 class="mb-2">CS 八股文背诵卡片</h2>
-  <p class="text-muted">共 <strong>{{ cards|length }}</strong> 张卡片，覆盖 <strong>{{ categories|length }}</strong> 个领域。点击卡片翻转查看解释。</p>
+
+<div class="section-gap">
+
+  <h2>CS 八股文背诵卡片</h2>
+
+  <p class="text-muted" style="max-width:620px;">
+
+    间隔重复记忆系统（SRS）· 自动安排复习 · 难卡高频，熟卡低频
+
+  </p>
+
+</div>
+
+<!-- SRS 统计面板 -->
+
+<div class="srs-stats" id="srs-stats">
+
+  <div class="srs-stat">
+
+    <span class="srs-stat-num" id="stat-total">{{ stats.total }}</span>
+
+    <span class="srs-stat-label">总计</span>
+
+  </div>
+
+  <div class="srs-stat highlight">
+
+    <span class="srs-stat-num" id="stat-due">{{ stats.due }}</span>
+
+    <span class="srs-stat-label">待复习</span>
+
+  </div>
+
+  <div class="srs-stat">
+
+    <span class="srs-stat-num" id="stat-new">{{ stats.new }}</span>
+
+    <span class="srs-stat-label">新卡片</span>
+
+  </div>
+
+  <div class="srs-stat">
+
+    <span class="srs-stat-num" id="stat-learning">{{ stats.learning }}</span>
+
+    <span class="srs-stat-label">学习中</span>
+
+  </div>
+
+  <div class="srs-stat">
+
+    <span class="srs-stat-num" id="stat-mature">{{ stats.mature }}</span>
+
+    <span class="srs-stat-label">已掌握</span>
+
+  </div>
+
 </div>
 
 <!-- 分类筛选 -->
-<div class="mb-4">
-  <button class="btn btn-outline-primary btn-sm me-2 mb-1 filter-btn active" data-cat="all">全部 ({{ cards|length }})</button>
+
+<div class="fc-filter-bar" id="filter-bar">
+
+  <button class="fc-filter-btn active" data-cat="all">全部</button>
+
   {% for cat, count in categories.items() %}
-  <button class="btn btn-outline-primary btn-sm me-2 mb-1 filter-btn" data-cat="{{ cat }}">{{ cat }} ({{ count }})</button>
+
+  <button class="fc-filter-btn" data-cat="{{ cat }}">{{ cat }}</button>
+
   {% endfor %}
+
 </div>
 
 <!-- 进度条 -->
-<div class="d-flex align-items-center mb-3">
-  <span id="progress-text" class="text-muted me-2">已翻: 0/{{ cards|length }}</span>
-  <div class="progress flex-grow-1" style="height: 8px;">
-    <div id="progress-bar" class="progress-bar" role="progressbar" style="width: 0%"></div>
+
+<div class="fc-progress" id="progress-wrap">
+
+  <span class="fc-progress-label" id="progress-label">1 / {{ stats.due }}</span>
+
+  <div class="progress flex-grow-1" style="height:4px;">
+
+    <div class="progress-bar" id="progress-bar" style="width:0%"></div>
+
   </div>
+
+  <span class="fc-progress-flipped" id="flipped-label">已翻 0</span>
+
 </div>
 
-<!-- 卡片网格 -->
-<div class="row" id="card-grid">
-  {% for card in cards %}
-  <div class="col-lg-3 col-md-4 col-sm-6 mb-3 card-wrapper" data-cat="{{ card.category }}">
-    <div class="flashcard" onclick="flipCard(this)" data-flipped="false">
-      <div class="flashcard-inner">
-        <div class="flashcard-front">
-          <span class="badge bg-primary mb-2">{{ card.category }}</span>
-          <div class="flashcard-term">{{ card.term }}</div>
-          <small class="text-muted mt-2 d-block">点击翻转查看解释</small>
-        </div>
-        <div class="flashcard-back">
-          <span class="badge bg-success mb-2">{{ card.category }}</span>
-          <div class="flashcard-explanation">{{ card.explanation }}</div>
-          <div class="flashcard-example">
-            <strong>举例：</strong>{{ card.example }}
-          </div>
-        </div>
-      </div>
+<!-- 单卡片区域 -->
+
+<div class="fc-stage" id="fc-stage">
+
+  <!-- 无待复习卡片时的提示 -->
+
+  <div class="srs-done" id="srs-done" style="display:none;">
+
+    <div class="srs-done-icon">
+
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+
+        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
+
+      </svg>
+
     </div>
-  </div>
-  {% endfor %}
-</div>
 
-<!-- 底部操作 -->
-<div class="text-center mt-4">
-  <button class="btn btn-outline-secondary me-2" onclick="resetAll()">重置所有卡片</button>
-  <button class="btn btn-outline-secondary me-2" onclick="flipAll()">全部翻转</button>
-  <button class="btn btn-primary" onclick="randomCard()">随机一张</button>
+    <h3>全部完成！</h3>
+
+    <p>当前没有待复习的卡片，稍后再来。</p>
+
+    <p class="srs-done-sub">记忆曲线会自动安排下一次复习时间。</p>
+
+  </div>
+
+  <div class="fc-card-wrapper" id="card-wrapper">
+
+    <div class="fc-card" id="fc-card" onclick="flipCard()">
+
+      <div class="fc-card-inner" id="card-inner">
+
+        <!-- 正面 -->
+
+        <div class="fc-card-front" id="card-front">
+
+          <div class="fc-front-header">
+
+            <span class="fc-cat-badge" id="cat-badge-front"></span>
+
+            <span class="fc-srs-info" id="srs-info-front"></span>
+
+          </div>
+
+          <div class="fc-front-body">
+
+            <div class="fc-term" id="card-term"></div>
+
+          </div>
+
+          <div class="fc-front-footer">
+
+            <span class="fc-hint">点击卡片查看详解</span>
+
+          </div>
+
+        </div>
+
+        <!-- 背面 -->
+
+        <div class="fc-card-back" id="card-back">
+
+          <div class="fc-back-header">
+
+            <span class="fc-cat-badge back-badge" id="cat-badge-back"></span>
+
+            <span class="fc-srs-info back-srs" id="srs-info-back"></span>
+
+          </div>
+
+          <div class="fc-back-body" id="back-body">
+
+            <div class="fc-back-term" id="back-term"></div>
+
+            <div class="fc-explanation" id="card-explanation"></div>
+
+            <div class="fc-example" id="card-example"></div>
+
+          </div>
+
+          <!-- SRS 评级按钮 -->
+
+          <div class="fc-rating-bar" id="rating-bar">
+
+            <button class="fc-rate-btn again" onclick="event.stopPropagation(); rateCard('again')">
+
+              <span class="fc-rate-label">Again</span>
+
+              <span class="fc-rate-hint">&lt;1m</span>
+
+            </button>
+
+            <button class="fc-rate-btn hard" onclick="event.stopPropagation(); rateCard('hard')">
+
+              <span class="fc-rate-label">Hard</span>
+
+              <span class="fc-rate-hint">~3d</span>
+
+            </button>
+
+            <button class="fc-rate-btn good" onclick="event.stopPropagation(); rateCard('good')">
+
+              <span class="fc-rate-label">Good</span>
+
+              <span class="fc-rate-hint">~7d</span>
+
+            </button>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- 导航按钮 -->
+
+    <button class="fc-nav-btn fc-nav-prev" id="btn-prev" onclick="prevCard()">
+
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+
+      上一张
+
+    </button>
+
+    <button class="fc-nav-btn fc-nav-next" id="btn-next" onclick="nextCard()">
+
+      下一张
+
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 6 15 12 9 18"/></svg>
+
+    </button>
+
+  </div>
+
 </div>
 
 <style>
-  .flashcard {
-    perspective: 1000px;
-    cursor: pointer;
-    height: 260px;
-  }
-  .flashcard-inner {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    transition: transform 0.5s;
-    transform-style: preserve-3d;
-  }
-  .flashcard.flipped .flashcard-inner {
-    transform: rotateY(180deg);
-  }
-  .flashcard-front, .flashcard-back {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    backface-visibility: hidden;
-    border-radius: 12px;
-    padding: 16px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    border: 1px solid #dee2e6;
-    overflow-y: auto;
-  }
-  .flashcard-front {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-  }
-  .flashcard-front .badge {
-    font-size: 0.7rem;
-  }
-  .flashcard-term {
-    font-size: 1.15rem;
-    font-weight: 700;
-    line-height: 1.4;
-  }
-  .flashcard-front small {
-    color: rgba(255,255,255,0.7) !important;
-    font-size: 0.7rem;
-  }
-  .flashcard-back {
-    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
-    color: white;
-    transform: rotateY(180deg);
-    justify-content: flex-start;
-    text-align: left;
-    font-size: 0.85rem;
-    line-height: 1.5;
-    padding: 14px;
-  }
-  .flashcard-back .badge {
-    align-self: center;
-    margin-bottom: 8px;
-  }
-  .flashcard-explanation {
-    margin-bottom: 8px;
-    font-weight: 500;
-  }
-  .flashcard-example {
-    background: rgba(255,255,255,0.2);
-    border-radius: 6px;
-    padding: 8px;
-    font-size: 0.8rem;
-    width: 100%;
-  }
-  .flashcard-example strong {
-    display: block;
-    margin-bottom: 3px;
-  }
-  .filter-btn.active {
-    background-color: #0d6efd;
-    color: white;
-  }
+/* ============================================
+   Card Design System - Category Visual Identity
+   ============================================ */
+
+/* ---------- SRS Panel ---------- */
+.srs-stats { display: flex; justify-content: center; gap: 1.5rem; margin-bottom: 1.75rem; flex-wrap: wrap; }
+.srs-stat { text-align: center; min-width: 56px; }
+.srs-stat-num { display: block; font-size: 1.35rem; font-weight: 700; color: var(--color-text); letter-spacing: -0.02em; }
+.srs-stat-label { display: block; font-size: 0.68rem; color: var(--color-text-light); text-transform: uppercase; letter-spacing: 0.06em; margin-top: 0.1rem; }
+.srs-stat.highlight .srs-stat-num { color: var(--color-primary); }
+
+.srs-done { text-align: center; padding: 3.5rem 1.5rem; max-width: 400px; margin: 0 auto; }
+.srs-done-icon { color: var(--color-success); margin-bottom: 1rem; }
+.srs-done h3 { font-size: 1.3rem; font-weight: 700; margin-bottom: 0.35rem; }
+.srs-done p { color: var(--color-text-muted); font-size: 0.9rem; margin-bottom: 0.2rem; }
+.srs-done-sub { font-size: 0.78rem !important; color: var(--color-text-light) !important; }
+
+/* ---------- Filter ---------- */
+.fc-filter-bar { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 1.25rem; justify-content: center; }
+.fc-filter-btn { font-size:0.78rem;font-weight:500;padding:0.35rem 0.85rem;border-radius:100px;border:1px solid var(--color-border);background:var(--color-surface);color:var(--color-text-muted);cursor:pointer;transition:all 0.15s ease; }
+.fc-filter-btn:hover { border-color:var(--color-primary);color:var(--color-primary);background:var(--color-primary-light); }
+.fc-filter-btn.active { background:var(--color-primary);color:#fff;border-color:var(--color-primary); }
+
+/* ---------- Progress ---------- */
+.fc-progress { display:flex;align-items:center;gap:0.75rem;margin-bottom:1.5rem;max-width:600px;margin-left:auto;margin-right:auto; }
+.fc-progress-label { font-size:0.8rem;font-weight:600;color:var(--color-text-muted);min-width:60px; }
+.fc-progress-flipped { font-size:0.78rem;color:var(--color-text-light);min-width:48px;text-align:right; }
+
+/* ---------- Stage ---------- */
+.fc-stage { display:flex;justify-content:center;align-items:flex-start;min-height:380px; }
+
+.fc-card-wrapper { position:relative;width:100%;max-width:480px;transition:max-width 0.45s cubic-bezier(0.4,0,0.2,1); }
+.fc-card-wrapper.expanded { max-width:min(80vw,800px); }
+.fc-card { width:100%;cursor:pointer;transition:transform 0.25s ease,box-shadow 0.25s ease; }
+.fc-card:hover { transform:translateY(-3px); }
+.fc-card-inner { position:relative;width:100%;min-height:350px;transition:transform 0.45s cubic-bezier(0.4,0,0.2,1),min-height 0.45s cubic-bezier(0.4,0,0.2,1);transform-style:preserve-3d; }
+.fc-card.flipped .fc-card-inner { transform:rotateY(180deg); }
+.fc-card-wrapper.expanded .fc-card-inner { min-height:500px; }
+
+.fc-card-front,.fc-card-back { position:absolute;width:100%;height:100%;min-height:350px;backface-visibility:hidden;border-radius:16px;overflow:hidden;display:flex;flex-direction:column; }
+.fc-card-wrapper.expanded .fc-card-front,.fc-card-wrapper.expanded .fc-card-back { min-height:500px; }
+
+/* ============================================
+   THEME SYSTEM - 6 domain visual identities
+   ============================================ */
+
+/* --- Base Card --- */
+.fc-card-front {
+  z-index:2; background:linear-gradient(165deg,#fafbfd 0%,#f2f4f9 100%);
+  backdrop-filter:blur(12px); border:1.5px solid #e4e7ee;
+  box-shadow:0 1px 2px rgba(0,0,0,0.03),0 2px 6px rgba(0,0,0,0.04),0 8px 20px rgba(0,0,0,0.05);
+  transition:border-color 0.35s ease,box-shadow 0.35s ease,background 0.35s ease;
+}
+.fc-card-back {
+  transform:rotateY(180deg); background:linear-gradient(165deg,#f6f7fb 0%,#edf0f6 100%);
+  border:1.5px solid #dde0e7;
+  box-shadow:0 1px 2px rgba(0,0,0,0.03),0 2px 6px rgba(0,0,0,0.04),0 8px 20px rgba(0,0,0,0.05);
+  display:flex;flex-direction:column; transition:border-color 0.35s ease,background 0.35s ease;
+}
+
+/* --- Network (blue-violet) --- */
+.theme-network .fc-card-front {
+  background:linear-gradient(165deg,#eef2ff 0%,#f6f8ff 100%);
+  border-color:rgba(76,111,255,0.25);
+  box-shadow:0 1px 2px rgba(76,111,255,0.04),0 2px 8px rgba(76,111,255,0.06),0 8px 24px rgba(76,111,255,0.06);
+}
+.theme-network .fc-card-back { background:linear-gradient(165deg,#e3e8fc 0%,#eef2fd 100%);border-color:rgba(76,111,255,0.3); }
+.fc-card-front.accent-network::before { background:#4C6FFF; }
+.fc-cat-badge.cat-network { background:#DCE4FF;color:#3B5DE7; }
+
+/* --- OS (green) --- */
+.theme-os .fc-card-front {
+  background:linear-gradient(165deg,#ecfdf5 0%,#f6fef9 100%);
+  border-color:rgba(34,197,94,0.25);
+  box-shadow:0 1px 2px rgba(34,197,94,0.04),0 2px 8px rgba(34,197,94,0.06),0 8px 24px rgba(34,197,94,0.06);
+}
+.theme-os .fc-card-back { background:linear-gradient(165deg,#dff9eb 0%,#ebfdf3 100%);border-color:rgba(34,197,94,0.3); }
+.fc-card-front.accent-os::before { background:#22C55E; }
+.fc-cat-badge.cat-os { background:#DCFCE7;color:#16A34A; }
+
+/* --- MySQL (amber) --- */
+.theme-mysql .fc-card-front {
+  background:linear-gradient(165deg,#fffbeb 0%,#fffdf5 100%);
+  border-color:rgba(245,158,11,0.25);
+  box-shadow:0 1px 2px rgba(245,158,11,0.04),0 2px 8px rgba(245,158,11,0.06),0 8px 24px rgba(245,158,11,0.06);
+}
+.theme-mysql .fc-card-back { background:linear-gradient(165deg,#fef6db 0%,#fefbea 100%);border-color:rgba(245,158,11,0.3); }
+.fc-card-front.accent-mysql::before { background:#F59E0B; }
+.fc-cat-badge.cat-mysql { background:#FEF3C7;color:#B45309; }
+
+/* --- Redis (cyan) --- */
+.theme-redis .fc-card-front {
+  background:linear-gradient(165deg,#ecfeff 0%,#f5ffff 100%);
+  border-color:rgba(6,182,212,0.25);
+  box-shadow:0 1px 2px rgba(6,182,212,0.04),0 2px 8px rgba(6,182,212,0.06),0 8px 24px rgba(6,182,212,0.06);
+}
+.theme-redis .fc-card-back { background:linear-gradient(165deg,#ddfafe 0%,#eafdfe 100%);border-color:rgba(6,182,212,0.3); }
+.fc-card-front.accent-redis::before { background:#06B6D4; }
+.fc-cat-badge.cat-redis { background:#CFFAFE;color:#0E7490; }
+
+/* --- Java (red) --- */
+.theme-java .fc-card-front {
+  background:linear-gradient(165deg,#fef2f2 0%,#fff8f8 100%);
+  border-color:rgba(239,68,68,0.2);
+  box-shadow:0 1px 2px rgba(239,68,68,0.04),0 2px 8px rgba(239,68,68,0.06),0 8px 24px rgba(239,68,68,0.06);
+}
+.theme-java .fc-card-back { background:linear-gradient(165deg,#fde3e3 0%,#fef0f0 100%);border-color:rgba(239,68,68,0.28); }
+.fc-card-front.accent-java::before { background:#EF4444; }
+.fc-cat-badge.cat-java { background:#FECACA;color:#DC2626; }
+
+/* --- C++ (violet) --- */
+.theme-cpp .fc-card-front {
+  background:linear-gradient(165deg,#f5f3ff 0%,#faf8ff 100%);
+  border-color:rgba(139,92,246,0.25);
+  box-shadow:0 1px 2px rgba(139,92,246,0.04),0 2px 8px rgba(139,92,246,0.06),0 8px 24px rgba(139,92,246,0.06);
+}
+.theme-cpp .fc-card-back { background:linear-gradient(165deg,#ece6fc 0%,#f3f0fd 100%);border-color:rgba(139,92,246,0.3); }
+.fc-card-front.accent-cpp::before { background:#8B5CF6; }
+.fc-cat-badge.cat-cpp { background:#EDE9FE;color:#7C3AED; }
+
+/* --- Algorithm (emerald) --- */
+.theme-algorithm .fc-card-front {
+  background:linear-gradient(165deg,#f0fdf4 0%,#f7fef9 100%);
+  border-color:rgba(16,185,129,0.25);
+  box-shadow:0 1px 2px rgba(16,185,129,0.04),0 2px 8px rgba(16,185,129,0.06),0 8px 24px rgba(16,185,129,0.06);
+}
+.theme-algorithm .fc-card-back { background:linear-gradient(165deg,#e2f9ec 0%,#eefdf4 100%);border-color:rgba(16,185,129,0.3); }
+.fc-card-front.accent-algorithm::before { background:#10B981; }
+.fc-cat-badge.cat-algorithm { background:#D1FAE5;color:#059669; }
+
+/* --- Default --- */
+.theme-default .fc-card-front { background:linear-gradient(165deg,#f8fafc 0%,#f1f5f9 100%);border-color:rgba(148,163,184,0.25); }
+.theme-default .fc-card-back { background:linear-gradient(165deg,#edf1f7 0%,#e8ecf3 100%);border-color:rgba(148,163,184,0.3); }
+
+/* ---------- Top accent bar ---------- */
+.fc-card-front::before { content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:16px 16px 0 0;background:var(--color-primary);opacity:0.4;transition:background 0.35s ease,opacity 0.35s ease; }
+
+/* ---------- Card Layout ---------- */
+.fc-front-header { padding:1rem 1.25rem 0;display:flex;align-items:center;justify-content:space-between; }
+.fc-front-body { flex:1;display:flex;align-items:center;justify-content:center;padding:0 1.5rem; }
+.fc-front-footer { padding:0 1.25rem 1rem;text-align:center; }
+.fc-back-header { padding:1rem 1.25rem 0;display:flex;align-items:center;justify-content:space-between; }
+.fc-back-body { flex:1;overflow-y:auto;padding:0.75rem 1.5rem 0.5rem; }
+
+/* ---------- Badge ---------- */
+.fc-cat-badge { display:inline-block;font-size:0.7rem;font-weight:600;letter-spacing:0.05em;padding:0.3em 0.85em;border-radius:100px;transition:background 0.35s ease,color 0.35s ease; }
+.fc-cat-badge.back-badge { transition:background 0.35s ease,color 0.35s ease; }
+.fc-cat-badge.cat-default { background:#f1f5f9;color:#64748b; }
+
+/* ---------- SRS Info ---------- */
+.fc-srs-info { font-size:0.68rem;color:var(--color-text-light);font-weight:500; }
+.fc-srs-info.back-srs { color:var(--color-text-muted); }
+
+/* ---------- Title ---------- */
+.fc-term { font-size:1.35rem;font-weight:700;line-height:1.4;color:#1a1d2e;text-align:center;word-break:break-word;max-width:420px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden; }
+.fc-back-term { font-size:1.05rem;font-weight:700;color:var(--color-text);margin-bottom:0.5rem;line-height:1.4; }
+.fc-hint { font-size:0.78rem;color:var(--color-text-light); }
+
+/* ---------- Back Content ---------- */
+.fc-explanation { font-size:0.9rem;line-height:1.75;color:#2d3040;margin-bottom:0.75rem; }
+.fc-example { background:rgba(255,255,255,0.7);border:1px solid rgba(0,0,0,0.06);border-radius:12px;padding:0.8rem 1rem;font-size:0.85rem;line-height:1.6;color:var(--color-text-muted);margin-bottom:0.5rem; }
+.fc-example .fc-example-label { display:block;font-size:0.7rem;font-weight:600;text-transform:uppercase;letter-spacing:0.04em;color:var(--color-text-light);margin-bottom:0.35rem; }
+
+/* ---------- Rating Buttons ---------- */
+.fc-rating-bar { display:flex;gap:0.5rem;padding:0.75rem 1rem;border-top:1px solid rgba(0,0,0,0.06);background:rgba(255,255,255,0.5); }
+.fc-rate-btn { flex:1;display:flex;flex-direction:column;align-items:center;gap:0.1rem;padding:0.55rem 0.35rem;border-radius:12px;cursor:pointer;transition:all 0.15s ease;font-family:var(--font-sans); }
+.fc-rate-btn:hover { transform:translateY(-1px); }
+.fc-rate-btn:active { transform:scale(0.97); }
+.fc-rate-label { font-size:0.82rem;font-weight:600; }
+.fc-rate-hint { font-size:0.65rem;opacity:0.55; }
+.fc-rate-btn.again { background:#fef2f2;border:1px solid #fecaca;color:#dc2626; }
+.fc-rate-btn.again:hover { background:#fee2e2;box-shadow:0 2px 8px rgba(220,38,38,0.15); }
+.fc-rate-btn.hard { background:#fffbeb;border:1px solid #fde68a;color:#d97706; }
+.fc-rate-btn.hard:hover { background:#fef3c7;box-shadow:0 2px 8px rgba(217,119,6,0.15); }
+.fc-rate-btn.good { background:#ecfdf5;border:1px solid #a7f3d0;color:#059669; }
+.fc-rate-btn.good:hover { background:#d1fae5;box-shadow:0 2px 8px rgba(5,150,105,0.15); }
+
+/* ---------- Nav ---------- */
+.fc-nav-btn { position:absolute;bottom:-48px;display:inline-flex;align-items:center;gap:0.3rem;padding:0.45rem 0.9rem;border:1px solid var(--color-border);border-radius:10px;background:var(--color-surface);color:var(--color-text);font-size:0.82rem;font-weight:500;cursor:pointer;transition:all 0.15s ease;z-index:10; }
+.fc-nav-btn:hover { background:#f3f4f6; }
+.fc-nav-btn:active { transform:scale(0.96); }
+.fc-nav-btn:disabled { opacity:0.3;cursor:not-allowed; }
+.fc-nav-prev { left:0; }
+.fc-nav-next { right:0; }
+
+/* ---------- Responsive ---------- */
+@media (max-width:640px) {
+  .srs-stats { gap:0.75rem; }
+  .srs-stat-num { font-size:1.1rem; }
+  .fc-card-wrapper { max-width:100%; }
+  .fc-card-wrapper.expanded { max-width:95vw; }
+  .fc-card-inner { min-height:300px; }
+  .fc-card-wrapper.expanded .fc-card-inner { min-height:450px; }
+  .fc-card-front,.fc-card-back { min-height:300px; }
+  .fc-card-wrapper.expanded .fc-card-front,.fc-card-wrapper.expanded .fc-card-back { min-height:450px; }
+  .fc-term { font-size:1.15rem; }
+  .fc-nav-btn { position:static;margin-top:0.75rem; }
+  .fc-card-wrapper { display:flex;flex-direction:column; }
+  .fc-nav-prev { align-self:flex-start; }
+  .fc-nav-next { align-self:flex-end; }
+  .fc-rating-bar { padding:0.5rem 0.6rem;gap:0.35rem; }
+  .fc-rate-btn { padding:0.45rem 0.25rem; }
+  .fc-rate-label { font-size:0.75rem; }
+}
+/* ---------- Memory Example ---------- */
+.fc-memory-example {
+  margin-top: 0.5rem;
+  border-top: 1px solid rgba(0,0,0,0.06);
+  padding-top: 0.5rem;
+}
+.fc-memory-label {
+  font-size: 0.68rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.05em; color: var(--color-primary); margin-bottom: 0.4rem;
+}
+.fc-memory-content { font-size: 0.82rem; line-height: 1.65; color: #374151; }
+.mem-scene, .mem-analogy, .mem-mnemonic {
+  padding: 0.5rem 0.6rem; margin-bottom: 0.4rem;
+  border-radius: 8px; border-left: 3px solid transparent;
+}
+.mem-scene { background: #f0f9ff; border-left-color: #3b82f6; }
+.mem-analogy { background: #f0fdf4; border-left-color: #22c55e; }
+.mem-mnemonic { background: #fefce8; border-left-color: #eab308; }
+.mem-scene strong, .mem-analogy strong, .mem-mnemonic strong {
+  font-size: 0.75rem; color: #1f2937;
+}
+.mem-icon { font-size: 0.85rem; margin-right: 0.15rem; }
+
 </style>
 
 <script>
-  let flippedCount = 0;
-  const total = {{ cards|length }};
 
-  function flipCard(el) {
-    const wasFlipped = el.dataset.flipped === 'true';
-    el.classList.toggle('flipped');
-    el.dataset.flipped = wasFlipped ? 'false' : 'true';
-    if (wasFlipped) flippedCount--;
-    else flippedCount++;
-    updateProgress();
+// ========== SRS 数据 ==========
+
+const allCards = {{ cards_json | safe }};
+
+const dueCards = {{ due_cards_json | safe }};
+
+const stats = {{ stats_json | safe }};
+
+let cards = [...dueCards];  // Show only due cards by default
+
+let currentIndex = 0;
+
+let isFlipped = false;
+
+let flippedSet = new Set();
+
+let currentFilter = 'all';
+
+let statsData = Object.assign({}, stats);
+
+// DOM refs
+
+const cardWrapper = document.getElementById('card-wrapper');
+
+const fcCard = document.getElementById('fc-card');
+
+const cardTerm = document.getElementById('card-term');
+
+const catBadgeFront = document.getElementById('cat-badge-front');
+
+const catBadgeBack = document.getElementById('cat-badge-back');
+
+const srsInfoFront = document.getElementById('srs-info-front');
+
+const srsInfoBack = document.getElementById('srs-info-back');
+
+const backTerm = document.getElementById('back-term');
+
+const cardExplanation = document.getElementById('card-explanation');
+
+const cardExample = document.getElementById('card-example');
+
+const progressLabel = document.getElementById('progress-label');
+
+const progressBar = document.getElementById('progress-bar');
+
+const flippedLabel = document.getElementById('flipped-label');
+
+const btnPrev = document.getElementById('btn-prev');
+
+const btnNext = document.getElementById('btn-next');
+
+const srsDone = document.getElementById('srs-done');
+
+const filterBar = document.getElementById('filter-bar');
+
+// Stats DOM
+
+const statTotal = document.getElementById('stat-total');
+
+const statDue = document.getElementById('stat-due');
+
+const statNew = document.getElementById('stat-new');
+
+const statLearning = document.getElementById('stat-learning');
+
+const statMature = document.getElementById('stat-mature');
+
+function updateStatsDisplay() {
+
+  statTotal.textContent = statsData.total;
+
+  statDue.textContent = statsData.due;
+
+  statNew.textContent = statsData.new;
+
+  statLearning.textContent = statsData.learning;
+
+  statMature.textContent = statsData.mature;
+
+}
+
+// Category to CSS class mapping
+
+const CATEGORY_THEMES = {
+  '计算机网络': { cat:'cat-network', accent:'accent-network', theme:'theme-network' },
+  '操作系统': { cat:'cat-os', accent:'accent-os', theme:'theme-os' },
+  'MySQL': { cat:'cat-mysql', accent:'accent-mysql', theme:'theme-mysql' },
+  'Redis': { cat:'cat-redis', accent:'accent-redis', theme:'theme-redis' },
+  'Java': { cat:'cat-java', accent:'accent-java', theme:'theme-java' },
+  '算法与数据结构': { cat:'cat-algorithm', accent:'accent-algorithm', theme:'theme-algorithm' },
+  'C++': { cat:'cat-cpp', accent:'accent-cpp', theme:'theme-cpp' },
+  'Python': { cat:'cat-default', accent:'', theme:'theme-default' }
+};
+
+function getCatClass(category) {
+  return (CATEGORY_THEMES[category] || CATEGORY_THEMES['Python']).cat;
+}
+function getAccentClass(category) {
+  return (CATEGORY_THEMES[category] || CATEGORY_THEMES['Python']).accent;
+}
+function getThemeClass(category) {
+  return (CATEGORY_THEMES[category] || CATEGORY_THEMES['Python']).theme;
+}
+
+function loadCard(index) {
+
+  if (cards.length === 0) {
+
+    cardWrapper.style.display = 'none';
+
+    srsDone.style.display = 'block';
+
+    progressLabel.textContent = '0 / 0';
+
+    progressBar.style.width = '0%';
+
+    return;
+
   }
 
-  function updateProgress() {
-    document.getElementById('progress-text').textContent = `已翻: ${flippedCount}/${total}`;
-    const pct = (flippedCount / total * 100).toFixed(0);
-    document.getElementById('progress-bar').style.width = pct + '%';
+  cardWrapper.style.display = 'block';
+
+  srsDone.style.display = 'none';
+
+  const card = cards[index];
+
+  // Reset
+
+  fcCard.classList.remove('flipped');
+
+  cardWrapper.classList.remove('expanded');
+
+  isFlipped = false;
+
+    // Apply category visual theme
+  const frontEl = document.getElementById('card-front');
+  const themeClass = getThemeClass(card.category);
+  const catClass = getCatClass(card.category);
+  const accentClass = getAccentClass(card.category);
+  // Apply theme to wrapper (controls card bg + border + shadow)
+  cardWrapper.className = 'fc-card-wrapper ' + themeClass;
+  // Apply accent + badge
+  frontEl.className = 'fc-card-front ' + accentClass;
+  catBadgeFront.className = 'fc-cat-badge ' + catClass;
+  catBadgeBack.className = 'fc-cat-badge back-badge ' + catClass;
+
+  // Front content
+
+  catBadgeFront.textContent = card.category;
+
+  cardTerm.textContent = card.term;
+
+  srsInfoFront.textContent = buildSrsLabel(card);
+
+  // Back content (pre-load)
+
+  catBadgeBack.textContent = card.category;
+
+  backTerm.textContent = card.term;
+
+  srsInfoBack.textContent = buildSrsLabel(card);
+
+  cardExplanation.textContent = card.explanation || '';
+
+  cardExample.innerHTML = (card.example || '') ?
+
+    '<span class="fc-example-label">示例</span>' + escapeHtml(card.example) : '';
+
+  // Progress
+
+  const num = index + 1;
+
+  progressLabel.textContent = num + ' / ' + cards.length;
+
+  progressBar.style.width = (num / cards.length * 100).toFixed(0) + '%';
+
+  flippedLabel.textContent = '已翻 ' + flippedSet.size;
+
+  // Nav
+
+  btnPrev.disabled = index === 0;
+
+  btnNext.disabled = index === cards.length - 1;
+
+}
+
+function buildSrsLabel(card) {
+
+  if (card.repetitions === undefined || card.repetitions === 0) {
+
+    return '新卡片';
+
   }
 
-  function resetAll() {
-    document.querySelectorAll('.flashcard').forEach(c => {
-      c.classList.remove('flipped');
-      c.dataset.flipped = 'false';
-    });
-    flippedCount = 0;
-    updateProgress();
-  }
+  var intv = card.interval || 1;
 
-  function flipAll() {
-    const all = document.querySelectorAll('.card-wrapper:not(.d-none) .flashcard');
-    const allFlipped = flippedCount >= all.length;
-    all.forEach(c => {
-      if (allFlipped) {
-        c.classList.remove('flipped');
-        c.dataset.flipped = 'false';
-      } else {
-        c.classList.add('flipped');
-        c.dataset.flipped = 'true';
-      }
-    });
-    flippedCount = allFlipped ? 0 : all.length;
-    updateProgress();
-  }
+  if (intv >= 21) return '已掌握 · ' + intv + '天';
 
-  function randomCard() {
-    const visible = document.querySelectorAll('.card-wrapper:not(.d-none) .flashcard');
-    if (visible.length === 0) return;
-    const idx = Math.floor(Math.random() * visible.length);
-    visible[idx].scrollIntoView({ behavior: 'smooth', block: 'center' });
-    if (visible[idx].dataset.flipped !== 'true') {
-      flipCard(visible[idx]);
+  return '学习中 · ' + intv + '天';
+
+}
+
+// ========== Memory Example Formatter ==========
+function formatMemoryExample(text) {
+  var html = escapeHtml(text);
+  // Format scene/analogy/mnemonic sections
+  html = html.replace(/场景[：:]\s*/g, '<div class="mem-scene"><span class="mem-icon">&#x1F3AF;</span> <strong>场景例子</strong><br>');
+  html = html.replace(/类比[：:]\s*/g, '</div><div class="mem-analogy"><span class="mem-icon">&#x1F4A1;</span> <strong>类比理解</strong><br>');
+  html = html.replace(/一句话记忆[：:]\s*/g, '</div><div class="mem-mnemonic"><span class="mem-icon">&#x1F9E0;</span> <strong>一句话记忆</strong><br>');
+  html += '</div>';
+  return html;
+}
+
+function flipCard() {
+
+  if (cards.length === 0) return;
+
+  isFlipped = !isFlipped;
+
+    if (isFlipped) {
+    fcCard.classList.add('flipped');
+    cardWrapper.classList.add('expanded');
+    // Preserve theme class when expanding
+    if (cards.length > 0) {
+      cardWrapper.classList.add(getThemeClass(cards[currentIndex].category));
+    }
+    flippedSet.add(cards[currentIndex].id);
+    flippedLabel.textContent = '已翻 ' + flippedSet.size;
+  } else {
+    fcCard.classList.remove('flipped');
+    cardWrapper.classList.remove('expanded');
+    // Re-apply theme class when collapsing
+    if (cards.length > 0) {
+      var t = getThemeClass(cards[currentIndex].category);
+      if (!cardWrapper.classList.contains(t)) cardWrapper.classList.add(t);
     }
   }
 
-  // 分类筛选
-  document.querySelectorAll('.filter-btn').forEach(btn => {
-    btn.addEventListener('click', function() {
-      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-      this.classList.add('active');
-      const cat = this.dataset.cat;
-      document.querySelectorAll('.card-wrapper').forEach(w => {
-        if (cat === 'all' || w.dataset.cat === cat) {
-          w.classList.remove('d-none');
-        } else {
-          w.classList.add('d-none');
-        }
-      });
-      // 重新计算可见卡片中的翻转数
-      flippedCount = 0;
-      document.querySelectorAll('.card-wrapper:not(.d-none) .flashcard').forEach(c => {
-        if (c.dataset.flipped === 'true') flippedCount++;
-      });
-      updateProgress();
+}
+
+function prevCard() {
+
+  if (currentIndex > 0) {
+
+    currentIndex--;
+
+    loadCard(currentIndex);
+
+  }
+
+}
+
+function nextCard() {
+
+  if (currentIndex < cards.length - 1) {
+
+    currentIndex++;
+
+    loadCard(currentIndex);
+
+  }
+
+}
+
+// ========== SRS Rating ==========
+
+async function rateCard(rating) {
+
+  if (cards.length === 0) return;
+
+  const card = cards[currentIndex];
+
+  const cardId = card.id;
+
+  try {
+
+    const resp = await fetch('/api/srs/review', {
+
+      method: 'POST',
+
+      headers: { 'Content-Type': 'application/json' },
+
+      body: JSON.stringify({ card_id: cardId, rating: rating })
+
     });
+
+    if (!resp.ok) throw new Error('API error');
+
+    const newSrs = await resp.json();
+
+    // Update card in allCards
+
+    var ac = allCards.find(function(c) { return c.id === cardId; });
+
+    if (ac) {
+
+      ac.ease = newSrs.ease;
+
+      ac.interval = newSrs.interval;
+
+      ac.repetitions = newSrs.repetitions;
+
+      ac.due_date = newSrs.due_date;
+
+      ac.last_reviewed = newSrs.last_reviewed;
+
+    }
+
+    // Update stats
+
+    statsData.due = Math.max(0, statsData.due - 1);
+
+    if (newSrs.repetitions === 0) {
+
+      // stayed new/learning
+
+    } else if (newSrs.interval >= 21) {
+
+      statsData.mature += 1;
+
+      statsData.learning = Math.max(0, statsData.learning - 1);
+
+    } else {
+
+      statsData.learning += (statsData.new > 0 ? 1 : 0);
+
+    }
+
+    if (statsData.new > 0) statsData.new -= 1;
+
+    updateStatsDisplay();
+
+    // Remove from current cards
+
+    cards.splice(currentIndex, 1);
+
+    if (cards.length === 0) {
+
+      cardWrapper.style.display = 'none';
+
+      srsDone.style.display = 'block';
+
+      progressLabel.textContent = '0 / 0';
+
+      progressBar.style.width = '0%';
+
+      flippedLabel.textContent = '已翻 ' + flippedSet.size;
+
+    } else {
+
+      if (currentIndex >= cards.length) currentIndex = cards.length - 1;
+
+      loadCard(currentIndex);
+
+    }
+
+  } catch (e) {
+
+    console.error('SRS review failed:', e);
+
+    // Fallback: just move to next card
+
+    cards.splice(currentIndex, 1);
+
+    if (cards.length === 0) {
+
+      cardWrapper.style.display = 'none';
+
+      srsDone.style.display = 'block';
+
+    } else {
+
+      if (currentIndex >= cards.length) currentIndex = cards.length - 1;
+
+      loadCard(currentIndex);
+
+    }
+
+  }
+
+}
+
+// Keyboard
+
+document.addEventListener('keydown', function(e) {
+
+  if (e.target.tagName === 'INPUT') return;
+
+  if (e.key === 'ArrowLeft') { e.preventDefault(); prevCard(); }
+
+  if (e.key === 'ArrowRight') { e.preventDefault(); nextCard(); }
+
+  if (e.key === ' ' || e.key === 'Spacebar') { e.preventDefault(); flipCard(); }
+
+  // Number keys for rating when flipped
+
+  if (isFlipped) {
+
+    if (e.key === '1') { e.preventDefault(); rateCard('again'); }
+
+    if (e.key === '2') { e.preventDefault(); rateCard('hard'); }
+
+    if (e.key === '3') { e.preventDefault(); rateCard('good'); }
+
+  }
+
+});
+
+// Category filter
+
+filterBar.querySelectorAll('.fc-filter-btn').forEach(function(btn) {
+
+  btn.addEventListener('click', function() {
+
+    filterBar.querySelectorAll('.fc-filter-btn').forEach(function(b) { b.classList.remove('active'); });
+
+    this.classList.add('active');
+
+    currentFilter = this.dataset.cat;
+
+    if (currentFilter === 'all') {
+
+      cards = dueCards.filter(function(c) {
+
+        return c.due_date <= new Date().toISOString().split('T')[0];
+
+      });
+
+    } else {
+
+      cards = dueCards.filter(function(c) {
+
+        return c.category === currentFilter &&
+
+               c.due_date <= new Date().toISOString().split('T')[0];
+
+      });
+
+    }
+
+    flippedSet.clear();
+
+    currentIndex = 0;
+
+    if (cards.length > 0) {
+
+      loadCard(0);
+
+    } else {
+
+      cardWrapper.style.display = 'none';
+
+      srsDone.style.display = 'block';
+
+      progressLabel.textContent = '0 / 0';
+
+      progressBar.style.width = '0%';
+
+      flippedLabel.textContent = '已翻 0';
+
+    }
+
   });
+
+});
+
+function escapeHtml(text) {
+
+  var d = document.createElement('div');
+
+  d.textContent = text;
+
+  return d.innerHTML;
+
+}
+
+// Init
+
+if (cards.length > 0) {
+
+  loadCard(0);
+
+} else {
+
+  cardWrapper.style.display = 'none';
+
+  srsDone.style.display = 'block';
+
+  progressLabel.textContent = '0 / 0';
+
+}
+
 </script>
+
 {% endblock %}
+

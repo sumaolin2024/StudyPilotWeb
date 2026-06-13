@@ -6,7 +6,7 @@ import random
 from datetime import datetime
 from pathlib import Path
 
-OUTPUT_FILE = Path(__file__).parent.parent / "quiz_output.txt"
+OUTPUT_FILE = Path(__file__).parent.parent / "static" / "quiz_output.txt"
 
 BAGUWEN_QUESTIONS = [
   {
@@ -301,6 +301,14 @@ BAGUWEN_QUESTIONS = [
 
 
 class QuizGenerator:
+    def get_quiz_data(self, course_name):
+        """Return structured quiz data as list of question dicts."""
+        if course_name == "八股文":
+            questions = BAGUWEN_QUESTIONS.copy()
+            random.shuffle(questions)
+            return questions[:15]
+        return self._generate_demo_data(course_name)
+
     def generate_quiz(self, course_name):
         """Generate quiz for a course"""
         if course_name == "八股文":
@@ -341,6 +349,34 @@ class QuizGenerator:
         content = "\n".join(lines)
         OUTPUT_FILE.write_text(content, encoding="utf-8")
         return True
+
+    def _generate_demo_data(self, course_name):
+        """Generate structured demo data"""
+        questions = []
+        for i in range(1, 6):
+            questions.append({
+                "course": course_name,
+                "type": "choice",
+                "question": course_name + " 的示例选择题 " + str(i) + "？",
+                "answer": random.choice(["A", "B", "C", "D"]),
+                "options": ["选项1", "选项2", "选项3", "选项4"]
+            })
+        for i in range(1, 6):
+            questions.append({
+                "course": course_name,
+                "type": "judge",
+                "question": course_name + " 的示例判断题 " + str(i) + "。",
+                "answer": random.choice(["对", "错"])
+            })
+        for i in range(1, 6):
+            questions.append({
+                "course": course_name,
+                "type": "fill",
+                "question": course_name + " 的示例填空题 " + str(i) + "：____。",
+                "answer": "示例答案" + str(i)
+            })
+        random.shuffle(questions)
+        return questions
 
     def _generate_demo_quiz(self, course_name):
         """Generate demo quiz (placeholder)"""

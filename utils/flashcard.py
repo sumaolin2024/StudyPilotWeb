@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""背诵卡片数据模块 - 整合CSView八股文内容"""
+"""背诵卡片数据模块 - 智能记忆强化示例"""
 
 FLASHCARD_DATA = [
   {
@@ -15,35 +15,35 @@ FLASHCARD_DATA = [
     "category": "计算机网络",
     "term": "校验和 TCP是端到端的传输，由发送方计算校验和，接收方进行验证，目的是为了验证TCP首部和数据在发",
     "explanation": "，一旦发现校验和有差错，直接丢弃TCP段并重新发送。",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 103,
     "category": "计算机网络",
     "term": "序列号/确认应答 TCP传输时发送方对每一个发送的消息都会编号，也就是序列号seq",
     "explanation": "接收方在每次接收到消息后回复确认应答号ACK，不仅告诉接收到哪些数据，还包括下一次消息从哪里发送。只要发送方没有接收到确认应答号ACK，都会重新发送数据。",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 104,
     "category": "计算机网络",
     "term": "超时重传 发送方发送完数据后会等待一定的时间，如果在这个时间内没有接收到ACK，就会重传数据",
     "explanation": "如果是发送方发生了丢包，那么接收方在接收到数据后会回复ACK，如果是接收方回复的ACK丢失了导致的重传，那么根据校验和和序列号知道该数据已经接收，丢弃该数据并发送ACK。",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 105,
     "category": "计算机网络",
     "term": "流量控制（滑动窗口控制） 发送方发送数据的快慢取决于接收方接收能力",
     "explanation": "TCP的报文信息中有一个16位字段来标识滑动窗口，窗口大小就是接收方剩余缓冲区大小，在回复ACK时，接收方将自己剩余缓冲区大小填入。发送方根据窗口大小来调整自己的发送速度，如果缓冲区大小为0，那么发送方会停止发送数据。并且发送方定期会发送探测报文，来获取缓冲区大小。",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 106,
     "category": "计算机网络",
     "term": "快速重传 当接收端收到比期望号大的seq时候，就会发送冗余ACK，在超时重传之前如果收到三个相同的冗",
     "explanation": "哪段报文发生了丢包，重传该段报文即可，避免了超时重传。",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 107,
@@ -57,21 +57,21 @@ FLASHCARD_DATA = [
     "category": "计算机网络",
     "term": "避免拥塞算法 每当收到一个 ACK 时，cwnd 增加 1/cwnd，变为线性增长",
     "explanation": "一但发现丢包和超时重传，就进入拥塞处理状态。",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 109,
     "category": "计算机网络",
     "term": "拥塞发生 当网络出现拥塞，也就是会发生数据包重传，重传机制主要有两种：超时重传和快速重传",
     "explanation": "ssthresh 和 cwnd 的值会发生变化 ssthresh 设为 cwnd/2 cwnd 重置为 1 发送三次前一个包的 ACK，于是发送端就会快速地重传，不必等待超时再重传。TCP 认为这种情况不严重，因为大部分没丢，只丢了一小部分，则 ssthresh 和 cwnd 变化如下： cwnd = cwnd/2 ，也就是设置为原来的一半 ssthresh = cwnd 进入快速恢复算法",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 110,
     "category": "计算机网络",
     "term": "快速恢复 拥塞窗口 cwnd = ssthresh + 3 （ 3 的意思是确认有 3 个数据包被收",
     "explanation": "据包 如果再收到重复的 ACK，那么 cwnd 增加 1 如果收到新数据的 ACK 后，把 cwnd 设置为第一步中的 ssthresh 的值，原因是该 ACK 确认了新的数据，说明从 duplicated ACK 时的数据都已收到，该恢复过程已经结束，可以回到恢复之前的状态了，也即再次进入拥塞避免状态",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 111,
@@ -85,7 +85,7 @@ FLASHCARD_DATA = [
     "category": "计算机网络",
     "term": "TCP为什么要三次握手",
     "explanation": "重要 只有三次握手才能证明服务端和客户端的收发能力都是正常的。 第一次握手：客户端发数据服务端接收，服务端可以知道客户端发消息的能力是正常的，自己接收消息的能力是正常的。 第二次握手：服务端发消息客户端收，客户端可以知道自己发送接收消息的能力和服务端发送接收消息的能力是正常的。 第三次握手：客户端再发送消息服务端接收，服务端可以知道自己发送消息的能力是正常的，客户端接收消息的能力是正常的。 由此经过三次握手之后双方就可以都知道自己的发送和接收消息的能力是正常的。",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 113,
@@ -106,7 +106,7 @@ FLASHCARD_DATA = [
     "category": "计算机网络",
     "term": "同步双方初始序列号 为了实现可靠数据传输，TCP协议的通信双方，都必须维护一个序列号，以标识发送出去",
     "explanation": "经被对方收到的。 三次握手的过程即是通信双方相互告知序列号起始值，并确认对方已经收到了序列号起始值的必经步骤。如果只是两次握手，至多只有连接发起方的起始序列号能被确认，另一方选择的序列号则得不到确认。",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 116,
@@ -120,14 +120,14 @@ FLASHCARD_DATA = [
     "category": "计算机网络",
     "term": "TCP为什么要四次挥手",
     "explanation": "掌握 关闭连接时，客户端向服务端发送 FIN时，仅仅表示客户端不再发送数据了但是还能接收数据。 服务端收到客户端的FIN报文时，先回一个 ACK 应答报文，而服务端可能还有数据需要处理和发送，等服务端不再发送数据时，才发送 FIN 报文给客户端来表示同意现在关闭连接。",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 118,
     "category": "计算机网络",
     "term": "在FIN_WAIT_2状态下，是如何处理收到的乱序到 FIN 报文，然后TCP连接又是什么时候才进入",
     "explanation": "状态？ 了解 在FIN_WAIT_2状态时，如果收到乱序的FIN报文会加入到乱序队列，并不会进入到TIME_WAIT状态。等再次收到前面被网络延迟的数据包时，会判断乱序队列有没有数据，检测乱序队列中是否有可用的数据，如果能在乱序队列中找到与当前报文的序列号保持的顺序的报文，就会看该报文是否有FIN标志，如果发现有FIN标志，才会进入TIME_WAIT状态。",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 119,
@@ -141,28 +141,28 @@ FLASHCARD_DATA = [
     "category": "计算机网络",
     "term": "TCP的延迟应答和累计应答",
     "explanation": "掌握 延迟应答 ：TCP在接收到对端的报文后并不会立即发送ACK，而是等待一段时间发送ACK，以便将ACK和要发送的数据一块发送。延迟时间不能无限延长，否则对方端会认为丢包超时而造成超时重传。Linux采用动态调节算法来确定等待的时间。 累计应答 ：为了保证顺序性，每一个包都有一个 ID （序号），在建立连接的时候，双方会商定起始的ID是多少，然后按照ID一个个发送。为了保证不丢包，对应发送的包都要进行应答，但不是一个个应答，而是会 应答某个之前的ID ，该模式称为 累计应答。",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 121,
     "category": "计算机网络",
     "term": "TCP会有三次挥手出现吗",
     "explanation": "了解 当被动关闭方在TCP挥手过程中， 没有数据要发送 并且开启了 延迟应答 ，第二和第三次挥手就会合并传输，这样就出现了三次挥手。",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 122,
     "category": "计算机网络",
     "term": "TCP的MSL",
     "explanation": "了解 MSL是任何报文在网络中被丢弃前的最长存活时间，这个时间是有限的，因为TCP是以IP数据报的形式在网络中传输，IP有限制其生存的时间TTL， RFC793指出MSL为2分钟，现实中常用30秒或1分钟。",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 123,
     "category": "计算机网络",
     "term": "已经建立了连接，客户端突然出现故障了会怎样",
     "explanation": "掌握 TCP存在保活计时器，如果客户端故障，服务器不会一直等待。通常计时器设置为两小时，在每次收到客户端发来的报文都会重置计时器，超时之后客户端就会发送探测报文，每隔75S发送一次，如果连续10个探测报文都没有收到回复，服务器会认为客户端发生故障，中断此次连接。",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 124,
@@ -176,14 +176,14 @@ FLASHCARD_DATA = [
     "category": "计算机网络",
     "term": "TCP的半连接队列和全连接队列",
     "explanation": "掌握 半连接队列 ：也称 SYN 队列，服务端收到客户端发起的 SYN 请求后， 内核会把该连接存储到半连接队列 ，并向客户端发SYN+ACK， 全连接队列 ：也称 accept 队列，服务端收到第三次握手的 ACK 后， 内核会把连接从半连接队列移除，然后创建新的完全的连接，并将其添加到全连接队列，等待进程调用 accept 函数时把连接取出来。",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 126,
     "category": "计算机网络",
     "term": "概念 SYN攻击是指利用合理的服务请求来占用过多的服务资源，从而使合法用户无法得到服务的响应",
     "explanation": "如果向某个服务器端口发送大量的SYN报文，接收到客户端发来的SYN报文之后，服务端就需要为每个请求分配一个进程控制块TCB，并返回一个SYN-ACK报文，并立即转为SYN_RECV半开连接状态，收不到对端ACK回复的服务端还会重传SYN-ACK报文, 系统会为此耗尽资源。",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 127,
@@ -197,7 +197,7 @@ FLASHCARD_DATA = [
     "category": "计算机网络",
     "term": "TIME_WAIT作用，过多如何解决",
     "explanation": "重要 提示 TCP常用的三个状态是： ESTABLISHED 表示正在通信， TIME_WAIT 表示主动关闭， CLOSE_WAIT 表示被动关闭。",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 129,
@@ -211,7 +211,7 @@ FLASHCARD_DATA = [
     "category": "计算机网络",
     "term": "危害 占用系统资源，比如文件描述符、内存资源、CPU 资源、线程资源等 占用端口资源，端口资源也是有",
     "explanation": "端口为 32768～61000，也可以通过 net.ipv4.ip_local_port_range参数指定范围",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 131,
@@ -232,7 +232,7 @@ FLASHCARD_DATA = [
     "category": "计算机网络",
     "term": "CLOSE_WAIT状态过多如何解决",
     "explanation": "了解 如果一直保持在CLOSE_WAIT状态，原因是在对方关闭连接之后服务器程序自己没有进一步发出ACK信号。 CLOSE_WAIT的解决办法是： 查代码。因为问题出在服务器程序。",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 134,
@@ -246,7 +246,7 @@ FLASHCARD_DATA = [
     "category": "计算机网络",
     "term": "概念 TCP的特点之一就是面向字节流的，也就是说传输时候数据像“水流一样”，是没有边界的，因此拆包这",
     "explanation": "P来完成。 所谓的粘包拆包就是TCP流的特性导致的，而且根本不能说是问题，拆包本身就应该在应用层来完成。",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 136,
@@ -274,28 +274,28 @@ FLASHCARD_DATA = [
     "category": "计算机网络",
     "term": "ClientHello 首先，由客户端向服务端发起加密通信请求",
     "explanation": "客户端主要向服务端发送： 客户端支持的 SSL/TLS协议版本 客户端产生的的随机数(Client Random） 客户端支持的密码套件列表",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 140,
     "category": "计算机网络",
     "term": "SeverHello 服务器收到客户端请求后，向客户端发出响应",
     "explanation": "服务端回应的内容有： 确认 SSL/ TLS 协议版本(如果浏览器不支持，则关闭加密通信） 服务端生产的随机数(Server Random） 确认的密码套件列表 服务端的数字证书",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 141,
     "category": "计算机网络",
     "term": "客户端回应 客户端收到服务端的回应之后，首先通过浏览器或者操作系统中的 CA 公钥，确认服务端的数字",
     "explanation": "如果证书没有问题，客户端会从数字证书中取出服务端的公钥，然后使用它加密报文，向服务端发送如下信息： 一个随机数，该随机数会被服务端公钥加密 加密通信算法改变通知，表示随后的信息都将用会话秘钥加密通信 客户端握手结束通知，表示客户端的握手阶段已经结束 之前所有内容的发生的数据做个摘要，用来供服务端校验 服务端和客户端有了三个随机数，接着用双方协商的加密算法，各自生成本次通信的会话秘钥。",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 142,
     "category": "计算机网络",
     "term": "服务端回应 服务端收到客户端的第三个随机数(pre-master key）之后，通过协商的加密算法，",
     "explanation": "秘钥。服务端向客户端发送最后的信息： 加密通信算法改变通知，表示随后的信息都将用「会话秘钥」加密通信 服务端握手结束通知，表示服务端的握手阶段已经结束 之前所有内容的发生的数据做个摘要，用来供客户端校验 接下来，客户端与服务器进入加密通信，就完全是使用普通的 HTTP 协议。",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 143,
@@ -316,7 +316,7 @@ FLASHCARD_DATA = [
     "category": "计算机网络",
     "term": "HTTP缓存有哪些实现方式",
     "explanation": "掌握 强制缓存 ：强缓存指的是只要浏览器判断缓存没有过期，则直接使用浏览器的本地缓存，决定是否使用缓存的主动性在于浏览器这边。 协商缓存 ：请求的响应码304，告诉浏览器可以使用本地缓存的资源，通过服务端告知客户端是否可以使用缓存的方式被称为协商缓存。",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 146,
@@ -330,7 +330,7 @@ FLASHCARD_DATA = [
     "category": "计算机网络",
     "term": "HTTP1.1 长连接 ：好处在于减少了 TCP 连接的重复建立和断开所造成的额外开销，减轻了服务器",
     "explanation": "支持管道(pipeline）网络传输 ：只要第一个请求发出去了，不必等其回来，就可以发第二个请求出去，可以减少整体的响应时间。 缓存处理 ：HTTP1.1则引入了更多的缓存控制策略，多可供选择的缓存头来控制缓存策略。 断点续传 ：HTTP1.1则在请求头引入了range头域，它允许只请求资源的某个部分，即返回码是206(Partial Content），这样就方便了开发者自由的选择以便于充分利用带宽和连接。",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 148,
@@ -351,7 +351,7 @@ FLASHCARD_DATA = [
     "category": "计算机网络",
     "term": "概念 HTTP/3 基于 UDP 协议 在应用层实现了 QUIC 协议 ，具有类似 TCP 的连接管",
     "explanation": "制的网络特性，让UDP协议变得可靠。",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 151,
@@ -379,7 +379,7 @@ FLASHCARD_DATA = [
     "category": "计算机网络",
     "term": "GET请求可以带body吗",
     "explanation": "掌握 RFC规范并没有规定GET请求不能带 body 的。任何请求都可以带 body 的。 GET 请求是获取资源，所以根据这个语义不需要用到 body。URL 中的查询参数也不是 GET 所独有的，POST 请求的 URL 中也可以有参数的。",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 155,
@@ -393,21 +393,21 @@ FLASHCARD_DATA = [
     "category": "计算机网络",
     "term": "什么是XSS攻击",
     "explanation": "有什么解决办法？ 掌握 XSS是指恶意攻击者利用网站没有对用户提交数据进行转义处理或者过滤不足的缺点，进而添加一些脚本代码嵌入到web页面中去，使别的用户访问都会执行相应的嵌入代码，从而盗取用户资料、利用用户身份进行某种动作或者对访问者进行病毒侵害的一种攻击方式。",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 157,
     "category": "计算机网络",
     "term": "分类 反射性XSS攻击(非持久性XSS攻击） ：漏洞产生的原因是攻击者注入的数据反映在响应中",
     "explanation": "持久性XSS攻击 (留言板场景) ：指XSS攻击代码存储在网站数据库，每当用户使用浏览器打开指定页面时，脚本就执行。与非持久性XSS攻击相比，持久性XSS攻击危害性更大。",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 158,
     "category": "计算机网络",
     "term": "危害 盗取各类用户帐号，如机器登录帐号、用户网银帐号、各类管理员帐号 控制企业数据，包括读取、篡改、",
     "explanation": "据的能力 盗窃企业重要的具有商业价值的资料 非法转账 强制发送电子邮件 网站挂马 控制受害者机器向其它网站发起攻击",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 159,
@@ -421,14 +421,14 @@ FLASHCARD_DATA = [
     "category": "计算机网络",
     "term": "概念 CSRF就是跨站请求伪造",
     "explanation": "登录受信任网站A，并在本地生成Cookie(如果用户没有登录网站A，那么网站B在诱导的时候，请求网站A的api接口时，会提示你登录） 在不登出A的情况下，访问危险网站B(其实是利用了网站A的漏洞）",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 161,
     "category": "计算机网络",
     "term": "防范 Token验证 服务器发送给客户端一个token，客户端提交的表单中带着这个token，如果这",
     "explanation": "法，那么服务器拒绝这个请求。 隐藏令牌 把token隐藏在http的head头中。 Referer验证 只接受本站的请求，服务器才做响应；如果不是，就拦截。",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 162,
@@ -456,21 +456,21 @@ FLASHCARD_DATA = [
     "category": "计算机网络",
     "term": "DNS采用TCP还是UDP，为什么",
     "explanation": "了解 DNS在进行区域传输的时候使用TCP协议， 其它时候则使用UDP协议 。TCP与UDP传送字节的长度限制不同，一般情况下一个DNS的UDP包的最大长度是 512 字节。 区域传输使用TCP协议的原因大概是： 区域传输的数据量相比单次DNS查询的数据量要大得多 区域传输对数据的可靠性和准确性相比普通的DNS查询要要高得多，因此使用TCP协议 域名解析时一般返回的内容都不超过512字节，首选的通讯协议是UDP。使用UDP传输，不用经过TCP三次握手，这样DNS服务器负载更低，响应更快。",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 166,
     "category": "计算机网络",
     "term": "概念 DNS重定向，通过覆盖计算机的TCP/IP设置，将个人查询重定向到域名服务器DNS",
     "explanation": "这可以通过使用恶意软件或修改服务器的设置来实现，一旦执行DNS劫持的个人控制了DNS，他们就可以使用它来将流量引导到不同的网站。 本地DNS劫持 攻击者在用户的计算机上安装木马恶意软件，并更改本地DNS设置以将用户重定向到恶意站点。 路由器DNS劫持 攻击者接管路由器并覆盖DNS设置，从而影响连接到该路由器的所有用户。 中间DNS攻击的人 攻击者拦截用户和DNS服务器之间的通信，并提供指向恶意站点的不同目标IP地址。",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 167,
     "category": "计算机网络",
     "term": "解决方法 加强域名账户的安全防护能力，使用有别于其他平台的用户名和强密码，定期对密码进行更换",
     "explanation": "定期查看域名账户信息、域名whois信息、域名解析状态，每天site网站检查是否存在非个人设定网页，发现异常及时联系域名服务商。 锁定域名解析状态，不允许通过DNS服务商网站修改记录，使用此方法后，需要做域名解析都要通过服务商来完成，这样可以从根本上杜绝通过攻击服务商修改解析记录的方法。",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 168,
@@ -491,21 +491,21 @@ FLASHCARD_DATA = [
     "category": "计算机网络",
     "term": "Cookie 概念 Cookie是服务器发送到用户浏览器并保存在本地的一小块数据，它会在浏览器下次向",
     "explanation": "时被携带并发送到服务器上。通常，它用于告知服务器两个请求是否来自同一浏览器。 如保持用户的登录状态， Cookie 使基于无状态的 HTTP 协议记录稳定的状态信息成为了可能 。 作用 会话状态管理（如用户登录状态、购物车、游戏分数或其它需要记录的信息） 个性化设置（如用户自定义设置、主题等） 浏览器行为跟踪（如跟踪分析用户行为等）",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 171,
     "category": "计算机网络",
     "term": "Session Session代表着服务器和客户端一次会话的过程",
     "explanation": "Session 对象存储特定用户会话所需的属性及配置信息。这样，当用户在应用程序的 Web 页之间跳转时，存储在 Session 对象中的变量将不会丢失，而是在整个用户会话中一直存在下去。当客户端关闭会话，或者 Session 超时失效时会话结束。",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 172,
     "category": "计算机网络",
     "term": "差别 作用范围不同 ：Cookie 保存在客户端（浏览器），Session 保存在服务端 存取方式的",
     "explanation": "只能保存 ASCII，Session 可以存任意数据类型 有效期不同 ：Cookie 可设置为长时间保持，比如经常使用的默认登录功能，Session 一般失效时间较短，客户端关闭或者 Session 超时都会失效 隐私策略不同 ：Cookie 存储在客户端，比较容易遭到不法获取；Session 存储在服务端，安全性相对 Cookie 要好一些 存储大小不同 ：单个 Cookie 保存的数据不能超过 4K，Session 可存储数据远高于 Cookie",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 173,
@@ -519,14 +519,14 @@ FLASHCARD_DATA = [
     "category": "计算机网络",
     "term": "概念 指的是浏览器不能执行其他网站的脚本",
     "explanation": "它是由浏览器的同源策略造成的。a页面想获取b页面资源，如果a、b页面的协议、域名、端口、子域名不同，所进行的访问行动都是跨域的，而浏览器为了安全问题一般都限制了跨域访问，也就是不允许跨域请求资源。",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 175,
     "category": "计算机网络",
     "term": "解决方法 Nginx ：使用Nginx作为代理服务器和用户交互，用户就只需要在80端口上进行交互就可",
     "explanation": "域问题。 JSONP ：网页通过添加一个script元素，向服务器请求 JSON 数据，服务器收到请求后，将数据放在一个指定名字的回调函数的参数位置传回来。缺点是只支持get请求，不支持post请求。 CORS ：跨域资源分享。 编辑此页 open in new window 上次编辑于: 贡献者: zijing2333 你认为这篇文章怎么样？ 0 0 0 0 0 0 昵称 邮箱 预览: 0 字 登录 提交 评论 按正序 按倒序 按热度 Powered by Waline v2.14.8",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 176,
@@ -596,7 +596,7 @@ FLASHCARD_DATA = [
     "category": "操作系统",
     "term": "等待线程t完成，并回收资源 使用线程分离（detach） 在某些情况下可能不需要等待线程完成，而只需",
     "explanation": "回收资源。这时可以使用线程分离（detach）方法。例如，在C++11的std::thread中，可以调用detach()方法将线程设置为分离状态。分离状态的线程在完成执行后会自动释放资源，无需调用join()方法。 示例（C++11）：",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 186,
@@ -869,7 +869,7 @@ FLASHCARD_DATA = [
     "category": "MySQL",
     "term": "MySQL的执行引擎有哪些",
     "explanation": "重要 主要有MyISAM、InnoDB、Memery等引擎： InnoDB引擎提供了对事务ACID的支持，还提供了行级锁和外键的约束。 MyISAM引擎不支持事务，也不支持行级锁和外键约束。 Memery就是将数据放在内存中，数据处理速度很快，但是安全性不高。",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 225,
@@ -883,7 +883,7 @@ FLASHCARD_DATA = [
     "category": "MySQL",
     "term": "存储引擎如何选择",
     "explanation": "了解 如果没有特别的需求，使用默认的InnoDB即可。 要支持事务选择InnoDB，如果不需要可以考虑MyISAM；如果表中绝大多数都只是读查询考虑MyISAM，如果既有读也有写使用InnoDB存储引擎。 系统奔溃后，MyISAM恢复起来更困难，能否接受系统崩溃的程度；MySQL5.5版本开始Innodb已经成为MySQL的默认引擎(之前是MyISAM)，说明其优势是有目共睹的。",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 227,
@@ -918,21 +918,21 @@ FLASHCARD_DATA = [
     "category": "MySQL",
     "term": "索引区分度",
     "explanation": "掌握 查询优化器发现某个值出现在表的数据行中的百分比（惯用的百分比界线是\"30%\"）很高的时候，会忽略索引，进行全表扫描。",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 232,
     "category": "MySQL",
     "term": "联合索引如何进行排序",
     "explanation": "掌握 给索引列和排序列建立一个联合索引，在查询时，查到一个索引之后，还要对 create_time 排序，用到文件排序 filesort，在 SQL 执行计划中，Extra 列会出现 Using filesort。 可以利用索引的有序性，在排序列建立联合索引，这样根据 status 筛选后的数据就是按照 create_time 排好序的，避免在文件排序，提高了查询效率。",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 233,
     "category": "MySQL",
     "term": "使用索引会有那些缺陷",
     "explanation": "重要 虽然索引大大提高了查询速度，同时却会降低更新表的速度，如对表进行INSERT、UPDATE和DELETE。因为更新表时，MySQL 不仅要保存数据，还要保存一下索引文件每次更新添加了索引列的字段，都会调整因为更新所带来的键值变化后的索引信息。 实际上索引也是一张表，该表保存了主键与索引字段，并指向实体表的记录，所以索引列也是要占用空间的。",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 234,
@@ -953,7 +953,7 @@ FLASHCARD_DATA = [
     "category": "MySQL",
     "term": "WHERE语句索引使用的注意事项",
     "explanation": "掌握 where子句使用的所有字段，都必须建立索引 确保MySQL版本5.0以上，且查询优化器开启了 index_merge_union=on ，也就是变量 optimizer_switch 里存在 index_merge_union 且为 on 。 不走索引原因 如果数据量太少，mysql制定执行计划时发现全表扫描比索引查找更快，会不使用索引。",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 237,
@@ -974,14 +974,14 @@ FLASHCARD_DATA = [
     "category": "MySQL",
     "term": "元数据锁 作用 ：对数据库表进行操作时，会自动给这个表加上元数据锁，为了保证当用户对表执行 CRUD",
     "explanation": "这个表结构做了变更。元数据锁在事务提交后才会释放。",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 240,
     "category": "MySQL",
     "term": "意向锁 作用 ：对某些记录加上「共享锁」之前，需要先在表级别加上一个「意向共享锁」，对某些纪录加上「",
     "explanation": "在表级别加上一个「意向独占锁」。普通的 select 是不会加行级锁的，普通的 select 语句是利用 MVCC 实现一致性读，是无锁的。 意向共享锁和意向独占锁是表级锁，不会和行级的共享锁和独占锁发生冲突，意向锁之间也不会发生冲突，只会和共享表锁和独占表锁发生冲突。意向锁的目的是为了快速判断表里是否有记录被加锁。 提示 select也是可以对记录加共享锁和独占锁的。",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 241,
@@ -1030,7 +1030,7 @@ FLASHCARD_DATA = [
     "category": "MySQL",
     "term": "在不同事务隔离级别下会发生什么现象",
     "explanation": "重要 读未提交 ：可能发生脏读、不可重复读和幻读现象； 读提交 ：可能发生不可重复读和幻读现象，但是不可能发生脏读现象； 可重复读 ：可能发生幻读现象，但是不可能脏读和不可重复读现象； 串行化 ：隔离级别下，脏读、不可重复读和幻读现象都不可能会发生。 提示 解决脏读现象 ：升级到读提交以上的隔离级别 解决不可重复读 ：升级到可重复读的隔离级别 解决幻读 ：不建议将隔离级别升级到串行化，因为这样会导致数据库在并发事务时性能很差。",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 248,
@@ -1051,7 +1051,7 @@ FLASHCARD_DATA = [
     "category": "MySQL",
     "term": "读提交怎么实现的",
     "explanation": "重要 读提交隔离级别是在每次读取数据时，都会生成一个新的 Read View。事务期间的多次读取同一条数据，前后两次读的数据可能会出现不一致，因为可能这期间另外一个事务修改了该记录，并提交了事务。 编辑此页 open in new window 上次编辑于: 贡献者: zijing2333 你认为这篇文章怎么样？ 0 0 0 0 0 0 昵称 邮箱 预览: 0 字 登录 提交 评论 按正序 按倒序 按热度 Powered by Waline v2.14.8",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 251,
@@ -1072,7 +1072,7 @@ FLASHCARD_DATA = [
     "category": "MySQL",
     "term": "binlog(归档日志） Server 层生成的日志，主要 用于数据备份和主从复制",
     "explanation": "在完成一条更新操作后，Server 层会生成一条 binlog，等之后事务提交的时候，会将该事物执行过程中产生的所有 binlog 统一写入 binlog 文件。binlog 文件是记录了所有数据库表结构变更和表数据修改的日志，不会记录查询类的操作。",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 254,
@@ -1086,7 +1086,7 @@ FLASHCARD_DATA = [
     "category": "MySQL",
     "term": "redo log和undo log区别",
     "explanation": "掌握 redo log 记录了此次事务 完成后 的数据状态，undo log 记录了此次事务 开始前 的数据状态。",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 256,
@@ -1100,14 +1100,14 @@ FLASHCARD_DATA = [
     "category": "MySQL",
     "term": "为什么有了binlog，还要有redo log",
     "explanation": "了解 早期版本 MySQL 里没有 InnoDB 引擎，MySQL 自带的 MyISAM引擎没有 crash-safe 的能力，binlog 日志只能用于归档。InnoDB 是另一个公司以插件形式引入 MySQL 的，所以 InnoDB 使用 redo log 来实现 crash-safe 能力。",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 258,
     "category": "MySQL",
     "term": "被修改 Undo 页面，需要记录对应 redo log 吗",
     "explanation": "了解 需要。开启事务后，InnoDB 更新记录前，首先要记录相应的 undo log，如果是更新操作，也就是要生成一条 undo log，undo log 会写入 Buffer Pool 中的 Undo 页面。 在内存修改该 Undo 页面后，需要记录对应的 redo log 。",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 259,
@@ -1121,28 +1121,28 @@ FLASHCARD_DATA = [
     "category": "MySQL",
     "term": "redo log容灾恢复过程",
     "explanation": "了解 如果 redo log 是完整(commit 状态)的，直接用 redo log 恢复； 如果 redo log 是预提交 prepare 但不是 commit 状态，此时要去判断 binlog 是否完整，如果完整那就提交 redo log，再用 redo log 恢复，不完整就回滚事务。",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 261,
     "category": "MySQL",
     "term": "redo log是直接写入磁盘的吗",
     "explanation": "了解 不是。直接写入磁盘会产生大量的 I/O 操作，redo log会写入redo log buffer，每当产生一条 redo log 时，会先写入到 redo log buffer，后续在持久化到磁盘。",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 262,
     "category": "MySQL",
     "term": "redo log比直接落盘的优点",
     "explanation": "了解 redo log 的写方式使用了追加，日志操作是 顺序写 ，磁盘操作是 随机写 ，MySQL 的写操作从磁盘的 随机写 变成了 顺序写 ，提升语句的执行性能。 实现事务的持久性，让 MySQL 有 crash-safe 的能力 ，能够保证 MySQL 在任何时间段突然崩溃，重启后之前已提交的记录都不会丢失； 将写操作从随机写变成了顺序写 ，提升 MySQL 写入磁盘的性能。",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 263,
     "category": "MySQL",
     "term": "redo log buffer什么时候刷盘",
     "explanation": "了解 MySQL 正常关闭时，会触发落盘 当 redo log buffer 中记录的写入量大于 redo log buffer 内存空间的一半时，会触发落盘 InnoDB 的后台线程每隔 1 秒，将 redo log buffer 持久化到磁盘 每次事务提交时都将缓存在 redo log buffer 里的 redo log 直接持久化到磁盘",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 264,
@@ -1205,7 +1205,7 @@ FLASHCARD_DATA = [
     "category": "MySQL",
     "term": "事务没提交redo log 会被持久化到磁盘吗",
     "explanation": "了解 会。事务执行中间过程的 redo log 也是直接写在 redo log buffer 中的，这些缓存在 redo log buffer 里的 redo log 也会被后台线程每隔一秒一起持久化到磁盘。",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 273,
@@ -1226,7 +1226,7 @@ FLASHCARD_DATA = [
     "category": "MySQL",
     "term": "Buffer Pool有什么作用",
     "explanation": "了解 主要的作用是实现缓存： 当读取数据时，如果数据存在于 Buffer Pool 中，会直接读取 Buffer Pool 中的数据。 当修改数据时，如果数据存在于 Buffer Pool 中，那直接修改 Buffer Pool 中数据所在的页，然后将其页设置为脏页(该页的内存数据和磁盘上的数据已经不一致)；不会立即将脏页写入磁盘，后续由后台线程选择一个合适的时机将脏页写入到磁盘。",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 276,
@@ -1268,7 +1268,7 @@ FLASHCARD_DATA = [
     "category": "Redis",
     "term": "缓存击穿 如果缓存中的 某个热点数据过期 了，此时大量的请求访问了该热点数据，就无法从缓存中读取，直",
     "explanation": "很容易就被高并发的请求冲垮。 解决方案 ： 互斥锁方案 ：保证同一时间只有一个业务线程更新缓存，未能获取互斥锁的请求，要么等待锁释放后重新读取缓存，要么就返回空值或者默认值。 不给热点数据设置过期时间 ：由后台异步更新缓存，或者在热点数据准备要过期前，提前通知后台线程更新缓存以及重新设置过期时间。",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 282,
@@ -1296,7 +1296,7 @@ FLASHCARD_DATA = [
     "category": "Redis",
     "term": "如何保证删除缓存操作一定能成功",
     "explanation": "掌握 重试机制 引入消息队列，删除缓存的操作由消费者来做，删除失败的话重新去消息队列拉取相应的操作，超过一定次数没有删除成功就像业务层报错。 订阅BINLog 订阅 binlog 日志，拿到具体要操作的数据，然后再执行缓存删除。可以让删除服务模拟自己伪装成一个 MySQL 的从节点，向 MySQL 主节点发送 dump 请求，主节点收到请求后，就会开始推送 BINLog ，删除服务解析 BINLog 字节流之后，转换为便于读取的结构化数据，再进行删除。",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 286,
@@ -1310,14 +1310,14 @@ FLASHCARD_DATA = [
     "category": "Redis",
     "term": "如何避免缓存失效",
     "explanation": "掌握 由后台线程频繁地检测缓存是否有效，检测到缓存失效了马上从数据库读取数据，并更新到缓存。 或者在业务线程发现缓存数据失效后， 通过消息队列发送一条消息通知后台线程更新缓存 ，后台线程收到消息后，在更新缓存前可以判断缓存是否存在，存在就不执行更新缓存操作；不存在就读取数据库数据，并将数据加载到缓存。 在业务刚上线的时候，最好提前把数据缓起来，而不是等待用户访问才来触发缓存构建，这就是所谓的 缓存预热 ，后台更新缓存的机制刚好也适合干这个事情。",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 288,
     "category": "Redis",
     "term": "如何实现延迟队列",
     "explanation": "了解 使用ZSet，ZSet 有一个 Score 属性可以用来存储延迟执行的时间。使用 zadd score1 value1 命令，再利用 zrangebysocre 查询符合条件的所有待处理的任务，通过循环执行队列任务。 什么是延迟队列 延迟队列是指把当前要做的事情，往后推迟一段时间再做： 在淘宝、京东等购物平台上下单，超过一定时间未付款，订单会自动取消 打车的时候，在规定时间没有车主接单，平台会取消你的单并提醒你暂时没有车主接单 点外卖的时候，如果商家在10分钟还没接单，就会自动取消订单",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 289,
@@ -1338,21 +1338,21 @@ FLASHCARD_DATA = [
     "category": "Redis",
     "term": "如何保证加锁和解锁过程的原子性",
     "explanation": "掌握 使用Lua脚本，因为 Redis 在执行 Lua 脚本时，可以以原子性的方式执行，保证了锁释放操作的原子性。",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 292,
     "category": "Redis",
     "term": "使用Redis实现分布式锁的优点和缺点",
     "explanation": "了解 优点 ：性能高效；实现方便；避免单点故障。 缺点 ：超时时间不好设置。如果锁的超时时间设置过长，会影响性能，如果设置的超时时间过短会保护不到共享资源。Redis主从复制模式中的数据是异步复制的，导致分布式锁的不可靠性。如果在 Redis 主节点获取到锁后，在没有同步到其他节点时，Redis 主节点宕机了，此时新的 Redis 主节点依然可以获取锁，所以多个应用服务就可以同时获取到锁。",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 293,
     "category": "Redis",
     "term": "如何为分布式锁设置合理的超时时间",
     "explanation": "掌握 可以基于续约的方式设置超时时间：先给锁设置一个超时时间，然后启动一个守护线程，让守护线程在一段时间后，重新设置这个锁的超时时间。实现方式就是：写一个守护线程，然后去判断锁的情况，当锁快失效的时候，再次进行续约加锁，当主线程执行完成后，销毁续约锁即可，不过这种方式实现起来相对复杂。",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 294,
@@ -1366,7 +1366,7 @@ FLASHCARD_DATA = [
     "category": "Redis",
     "term": "Redis管道有什么用",
     "explanation": "了解 管道技术是客户端提供的一种批处理技术，用于一次处理多个 Redis 命令，从而提高整个交互的性能。使用 管道技术可以解决多个命令执行时的网络等待 ，它是把多个命令整合到一起发送给服务器端处理之后统一返回给客户端，这样就免去了每条命令执行后都要等待的情况，从而有效地提高了程序的执行效率。 但使用管道技术也要注意避免发送的命令过大，或管道内的数据太多而导致的网络阻塞。管道技术本质上是客户端提供的功能，而非 Redis 服务器端的功能。",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 296,
@@ -1394,14 +1394,14 @@ FLASHCARD_DATA = [
     "category": "Redis",
     "term": "Redis切片集群的工作原理",
     "explanation": "掌握 切片集群会采用哈希槽来进行数据和节点的映射，一个切片集群一共有16384个槽位，每个存储数据的key会经过运算映射到16384个槽位中，映射关系如下： 由key通过CRC16算法计算出一个16bit的数字 根据上面计算得到的数字对16384取模来确定对应的哈希槽",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 300,
     "category": "Redis",
     "term": "哈希槽和Redis节点是如何对应的",
     "explanation": "了解 主要有平均分配和手动分配两种方式。平均分配是集群创建时，Redis自动将哈希槽平均分配到集群节点上；手动分配是使用命令指定每个节点上面的哈希槽数目，使用手动分配时要把16384个槽位给分完，否则集群不会正常工作。",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 301,
@@ -1415,35 +1415,35 @@ FLASHCARD_DATA = [
     "category": "Redis",
     "term": "主服务器如何知道要将哪些增量数据发送给从服务器",
     "explanation": "了解 网络断开从服务器重新上线之后，会发送自己的复制偏移量到主服务器，主服务器根据偏移量之间的差距判断要执行的操作：如果从服务器要读的数据在repl_backlog_buffe中，则采用增量复制；如果不在，采用全量复制。 repl_backlog_buffer repl_backlog_buffer 是一个 环形 缓冲区，用于主从服务器断连后，从中找到差异的数据； replication offset 标记缓冲区的同步进度。",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 303,
     "category": "Redis",
     "term": "如何避免主从数据的不一致",
     "explanation": "掌握 让主从节点处于同一机房，降低网络延迟；或者由外部程序监控主从复制进度：先计算得出主从服务之间的复制进度差，如果复制进度差大于程序设定的阈值，让客户端不再在此节点读取数据，减小数据不一致的情况对业务的影响。 提示 为了避免出现客户端和所有从节点都不能连接的情况，需要把复制进度差值的阈值设置得大一些。",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 304,
     "category": "Redis",
     "term": "主从架构中过期key如何处理",
     "explanation": "了解 主节点处理一个过期的key之后就会发送一条删除命令给从服务器，从节点收到命令后进行删除。",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 305,
     "category": "Redis",
     "term": "主从模式是同步复制还是异步复制",
     "explanation": "了解 异步。因为主节点收到写命令之后，先写到内部的缓冲区，然后再异步发送给从节点。",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 306,
     "category": "Redis",
     "term": "哨兵机制是什么",
     "explanation": "重点 因为在主从架构中读写是分离的，如果主节点挂了，将没有主节点来响应客户端的写操作请求，也无法进行数据同步。哨兵作用是实现主从节点故障转移。哨兵会监测主节点是否存活，如果发现主节点挂了，会选举一个从节点切换为主节点，并且把新主节点的相关信息通知给从节点和客户端。",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 307,
@@ -1471,7 +1471,7 @@ FLASHCARD_DATA = [
     "category": "Java",
     "term": "ArrayList、LinkedList和Vector的区别",
     "explanation": "ArrayList基于数组，查询较快，末尾插入O(1)，中间i处插入O(n-i)，需要移动元素，可通过序号快速获取对象，线程不安全，有预留的内存空间 LinkedList基于双向链表，末尾插入O(1)，中间i处插入O(n-i)，但不需要移动元素，不可通过序号快速获取对象，线程不安全，没有预留的内存空间，但每个节点都有两个指针占用了内存 Vector和ArrayList实现上基本相同，区别在于Vector是线程安全的，其各种增删改查方法加了synchronized修饰",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 311,
@@ -1492,7 +1492,7 @@ FLASHCARD_DATA = [
     "category": "Java",
     "term": "HashSet、LinkedHashSet和TreeSet的区别 LinkedHashSet是Has",
     "explanation": "shSet的基础上能过够按照添加的顺序遍历 TreeSet底层使用红黑树，插入时按照默认/自定义的key排序规则指定插入位置",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 314,
@@ -1513,7 +1513,7 @@ FLASHCARD_DATA = [
     "category": "Java",
     "term": "锁 并发控制中的锁一般有两种， 悲观锁 和 乐观锁 ，一般来说悲观锁是基于Monitor实现的，乐观",
     "explanation": "旋 来实现的，这二者在Java中分别对应 synchronized关键字 和 AQS",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 317,
@@ -1667,7 +1667,7 @@ FLASHCARD_DATA = [
     "category": "C++",
     "term": "3. 局部变量在内存中如何被分配",
     "explanation": "是否产生符号？ 局部变量在内存中是通过栈（Stack）进行分配的。当一个函数被调用时，会为该函数创建一个栈帧（Stack Frame）。栈帧中包含了该函数的局部变量、函数参数以及其他与函数调用相关的信息。局部变量在栈上分配内存是由编译器自动处理的，函数调用结束后，分配的内存会自动释放。 关于局部变量是否产生符号 局部变量的作用域仅限于其所在的函数，因此在链接阶段不会产生符号。符号表中的符号通常是全局或静态变量、函数等，它们在编译和链接过程中需要被解析和分配内存。",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 339,
@@ -1702,7 +1702,7 @@ FLASHCARD_DATA = [
     "category": "C++",
     "term": "8. delete是如何知道释放内存的大小",
     "explanation": "与编译器和操作系统的实现有关。通常，编译器和内存管理子系统会在分配的内存块中存储一些元数据，以帮助跟踪内存的分配和释放。 当使用 new 操作符分配内存时，内存管理子系统会在实际分配的内存块中包含一些额外的信息，例如内存块的大小。这些信息通常存储在分配给对象的内存块之前的位置。当 delete 操作符被调用时，它会根据指针检索这些元数据，以确定要释放的内存块的大小。",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 344,
@@ -1772,14 +1772,14 @@ FLASHCARD_DATA = [
     "category": "C++",
     "term": "5. 从汇编层去解释一下引用",
     "explanation": "在汇编层面，引用实际上是一个隐式指针。引用的底层实现依赖于编译器，但通常情况下，引用在汇编代码中会被转换为指向目标对象的指针。这意味着，在汇编层面，引用的行为与指针相似。 C++ 代码：",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 354,
     "category": "C++",
     "term": "调用 increment 函数 ... 在这个汇编代码片段中，变量 a 的内存地址首先被加载到寄存器",
     "explanation": "然后， eax 寄存器的值（即 a 的内存地址）被传递给 increment 函数的第一个参数（在这里是 rdi 寄存器）。这表明，在汇编层面，引用被实现为指针。 这个例子说明了引用在汇编层面的实现，具体的汇编代码可能因编译器、优化级别和目标平台的不同而有所不同。从概念上讲，引用在汇编层面通常会被实现为指向目标对象的指针。",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 355,
@@ -1842,14 +1842,14 @@ FLASHCARD_DATA = [
     "category": "C++",
     "term": "14. 智能指针有哪些以及有什么作用",
     "explanation": "std::unique_ptr `std::unique_ptr 是一种独占式智能指针，表示对动态分配内存的唯一所有权。 unique_ptr 在作用域结束时自动释放它所管理的内存。由于它不能被复制，但可以通过 std::move 进行转移，因此确保了一个对象在任何时刻最多只有一个 unique_ptr指向它。",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 364,
     "category": "C++",
     "term": "15. shared_ptr出现循环引用怎么解决",
     "explanation": "shared_ptr 是 C++ 中的一种智能指针，它能自动管理引用计数，当引用计数为零时，智能指针所指向的对象会被自动销毁。但是，当出现循环引用时，智能指针可能会导致内存泄漏。 解决 shared_ptr 循环引用的常用方法是使用 weak_ptr 。 weak_ptr 是一种弱引用智能指针，它不会增加引用计数，但可以在需要时获取 shared_ptr 实例。通过将循环引用中的某个 shared_ptr 替换为 weak_ptr ，可以避免循环引用，从而解决内存泄漏问题。",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 365,
@@ -1863,7 +1863,7 @@ FLASHCARD_DATA = [
     "category": "C++",
     "term": "17. 手写实现智能指针类",
     "explanation": "智能指针类包括构造函数、拷贝构造函数、赋值操作符和析构函数。它还重载了解引用操作符和箭头操作符，使其更像原生指针。这个实现使用一个整数变量来存储引用计数，并在拷贝构造函数和赋值操作符中更新引用计数。在析构函数中，如果引用计数为零，则释放内存资源。",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 367,
@@ -1898,7 +1898,7 @@ FLASHCARD_DATA = [
     "category": "C++",
     "term": "5. 构造函数能否为虚函数",
     "explanation": "构造函数不建议是虚函数。在C++中，虚函数的主要目的是实现多态，允许派生类覆盖或重写基类中的虚函数。虚函数在运行时通过虚函数表（vtable）来实现动态分派。 然而，构造函数负责初始化类的对象，它是在对象创建时自动调用的。当我们创建一个派生类对象时，首先调用基类的构造函数，然后依次调用派生类的构造函数。在这个过程中，虚函数表并没有完全建立，因此无法实现动态分派。此外，构造函数没有返回类型，不能被继承，这意味着派生类不能覆盖基类的构造函数。所以，构造函数不能是虚函数。",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 372,
@@ -1975,7 +1975,7 @@ FLASHCARD_DATA = [
     "category": "C++",
     "term": "16. 什么是组合",
     "explanation": "组合（Composition）是一种面向对象编程（OOP）设计原则，它表示一个类可以包含另一个类的对象作为其成员变量。组合可以用来表示一种“has-a”关系（拥有关系）或者“part-of”关系（部分关系）。 组合的主要优点是它提供了代码的模块化、复用性和可维护性。通过将不同的功能和特性分解成独立的类，可以将这些类组合成更复杂的类。在这种情况下，组合的类不需要知道其成员对象的内部实现细节，只需要知道如何与它们交互。",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 383,
@@ -2024,7 +2024,7 @@ FLASHCARD_DATA = [
     "category": "C++",
     "term": "24. 设计一个类计算子类的个数",
     "explanation": "可以利用构造函数和析构函数，以及一个静态成员变量来记录子类对象的个数。以下是一个示例：",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 390,
@@ -2115,7 +2115,7 @@ FLASHCARD_DATA = [
     "category": "C++",
     "term": "10. 编译期间，为什么我们要为头文件添加保护",
     "explanation": "在C++编程中，为头文件添加保护（通常称为“头文件保护”或“头文件防卫”）是为了防止头文件被多次包含（include）和重复定义，避免编译错误和冗余编译。头文件保护通常通过预处理器指令（如 #ifndef、#define 和 #endif）实现。 以下是头文件保护的一个典型示例：",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 403,
@@ -2136,56 +2136,56 @@ FLASHCARD_DATA = [
     "category": "C++",
     "term": "12. 预编译指令有哪些",
     "explanation": "C++ 预处理器（preprocessor）是在编译过程之前处理源代码的一种工具。预处理器可以识别以",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 406,
     "category": "C++",
     "term": "开头的指令",
     "explanation": "以下是一些常见的 C++ 预处理指令： #include 用于包含其他头文件。将指定的头文件内容插入到当前源文件中。例如：",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 407,
     "category": "C++",
     "term": "define SQUARE ( x ) ( ( x ) * ( x ) ) #undef ：取消宏定",
     "explanation": "移除先前使用 #define 定义的宏。例如：",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 408,
     "category": "C++",
     "term": "undef PI #ifdef 、 #ifndef 、 #if 、 #elif 、 #else 和",
     "explanation": "编译指令。根据条件包含或排除代码。例如：",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 409,
     "category": "C++",
     "term": "endif #error ：生成编译时错误",
     "explanation": "当预处理器遇到 #error 指令时，会中止编译并显示指定的错误消息。例如：",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 410,
     "category": "C++",
     "term": "endif #pragma ：编译器特定指令",
     "explanation": "用于向编译器发送特殊的命令。 #pragma 指令因编译器而异，具体取决于编译器的实现。例如：",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 411,
     "category": "C++",
     "term": "pragma warning ( disable : 4100 ) // 禁用特定警告（仅适用于某些",
     "explanation": "：修改当前行号和文件名。用于控制编译器在错误和警告消息中显示的行号和文件名。例如：",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 412,
     "category": "C++",
     "term": "line 200 \"myfile.cpp\" 接下来的代码将从第 200 行开始计数，并指定文件名为",
     "explanation": "p\"。这在某些情况下对于调试和诊断问题很有用。",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 413,
@@ -2199,7 +2199,7 @@ FLASHCARD_DATA = [
     "category": "C++",
     "term": "define SQUARE ( x ) ( ( x ) * ( x ) ) 内联函数 square",
     "explanation": "，确保传入的参数是 int 类型。而宏定义 SQUARE 则没有类型检查，可能导致类型错误或未定义行为。同时，内联函数遵循正常的作用域规则和访问控制，而宏定义则是全局的并不遵循正常的作用域规则。",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 415,
@@ -2213,7 +2213,7 @@ FLASHCARD_DATA = [
     "category": "C++",
     "term": "15. 如何解决C++中的符号重复定义问题",
     "explanation": "这种问题通常发生在以下几种情况： 同一个文件中重复定义了同名的全局变量、函数或类。 不同文件中定义了同名的全局变量、函数或类。 静态库中存在重复的符号。 链接了重复的目标文件。 为了解决C++中的符号重复定义问题，可以尝试以下方法： 使用 #pragma once 或者 #ifndef / #define / #endif 的方式避免头文件被重复包含。例如： // header.h",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 417,
@@ -2388,70 +2388,70 @@ FLASHCARD_DATA = [
     "category": "系统设计",
     "term": "秒杀界面CDN 内容分发网络(CDN)",
     "explanation": "可以在秒杀开始前，预先把网页的静态资源存放在 CDN 节点，用户在刷新界面时直接从 CDN 获取静态资源，从而降低刷新秒杀界面对服务器造成的压力。添加了 CDN 服务之后，秒杀界面有大量用户同时访问和刷新并不会给服务端带来多大压力。",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 442,
     "category": "系统设计",
     "term": "秒杀按钮优化 秒杀系统往往会有一个秒杀按钮，如果不对按钮进行限制，可能存在以下问题： 用户在秒杀开始",
     "explanation": "无用的请求 用户在秒杀开始后多次点击按钮，造成很多重复请求 可以对按钮做一些限制：秒杀开始前按钮不可用，用户点击一次秒杀按钮后，按钮也进入不可用状态。这种方式无法限制通过脚本请求后端的情况，但是可以限制正常用户的多次无效点击，大大降低请求量。",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 443,
     "category": "系统设计",
     "term": "秒杀链接优化 用户在点击秒杀按钮的时候，前端会请求一个固定的 URL，这个 URL 可以在前端界面查",
     "explanation": "对于普通不懂技术的用户来说，这没有什么问题，如果用户稍微懂点 Http 协议，就可以在秒杀开始前拿到 URL，在秒杀开始前或开始的毫秒级时间内请求秒杀链接，不仅会给服务端带来很大的压力，还会造成不公平现象：商品都被开脚本的人抢走了。为了避免这种现象，可以将 URL 动态化，即使秒杀系统的开发人员也无法在知晓在秒杀开始时的 URL。具体实现方法是在获取秒杀 URL 的接口中，返回一个服务器端生成的随机数，并在下单 URL 中传递该参数完成下单。",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 444,
     "category": "系统设计",
     "term": "秒杀验证码 动态 URL 避免了用户在秒杀开始前请求秒杀链接，但是用户还是可以通过脚本在秒杀开始的那",
     "explanation": "普通用户基本没有办法和脚本秒杀进行竞争。可以引入机器难以识别的验证码，用户在请求秒杀链接之前，需要填写验证码识别的结果，验证码错误的请求直接拒绝。使用验证码不仅可以增加脚本秒杀的难度，还可以降低请求的 QPS，因为请求不再是在秒杀那一刻进来，而会被分散到填写验证码的时间段内。",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 445,
     "category": "系统设计",
     "term": "过滤请求 可以在用户端和服务端添加一层过滤层，只要保证有100个以上的请求能打到秒杀服务器端",
     "explanation": "使用 Nginx 服务器来构建过滤层，一个 Nginx 服务器也没法抗 100W 的请求，假设每个 Nginx 服务器可以处理 10W 的请求，那么就需要 10 台 Nginx。可以简单的让每个 Nginx 服务器只通过前 100 个请求，后续请求直接返回降级界面。通过 Nginx 过滤，可以把 100W 的请求过滤为 1000 个请求，大大减少了服务器端的压力。",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 446,
     "category": "系统设计",
     "term": "Redis缓存 如果通过前面的过滤，请求量依旧非常大，如果数据库无法处理这些请求量，需要在数据库之上",
     "explanation": "缓存。单个 Redis 可以处理几万的 QPS，如果预估请求的 QPS 大于几万，可以使用 Redis 集群模式来增加 Redis 的处理能力。在 Redis 存放和售卖商品数目大小相同的数字，秒杀服务每次访问数据库之前，都需要先去 Redis 中扣减库存，扣减成功才能继续更新数据库。这样，最终到的数据库的请求数目和需要售卖商品的数目基本一致，数据库的压力可以大大减少。",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 447,
     "category": "系统设计",
     "term": "Redis原子性 Redis是不支持事务的，所以可能出现扣减为负数的情况，这种情况下可以使用 Lua",
     "explanation": "操作的原子性，从而保证扣减结果的正确性。",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 448,
     "category": "系统设计",
     "term": "异步更新数据库 通过 Redis 判断之后，去更新数据库的请求都是必要的请求，这些请求数据库必须要处",
     "explanation": "是处理不过来这些请求怎么办呢？ 这个时候就可以考虑削峰填谷操作了，削峰填谷最好的实践就是 MQ 了。经过 Redis 库存扣减判断之后，我们已经确保这次请求需要生成订单，我们就可以通过异步的形式通知订单服务生成订单并扣减库存。",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 449,
     "category": "系统设计",
     "term": "如何设计一个分布式ID",
     "explanation": "为了保证全局唯一性可以用时间作为区分点一部分，时间尽可能细化，可以精确到毫秒，甚至是微秒和纳秒。如果是分布式系统有多台机器，可以根据机器ID再进行以下区分。如果机器运行的特别快，1毫秒有大量ID生成，可以结合实际限制下实际生成的ID数目。 如果N台机器去 ID生成服务器 的服务端得到全局ID，很容易保证全局唯一且自增的，但是存在单点失效的问题， 不满足高可用。",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 450,
     "category": "系统设计",
     "term": "雪花算法 生成的结果是一个 int64 的数据",
     "explanation": "核心思想是：使用41bit作为毫秒数，10bit作为机器的ID(5个bit是数据中心，5个bit的机器ID)，12bit作为毫秒内的流水号，意味着每个节点在每毫秒可以产生 4096个ID，最后还有一个符号位，永远是0。 优点 ：优点是毫秒数在高位，自增序列在低位，整个ID都是趋势递增的。不依赖数据库等第三方系统，以服务的方式部署，稳定性更高，生成ID的性能也是非常高的。可以根据自身业务特性分配bit位，非常灵活。 缺点 ：强依赖机器时钟，如果机器上时钟回拨，会导致号重复或者服务会处于不可用状态",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 451,
@@ -2479,7 +2479,7 @@ FLASHCARD_DATA = [
     "category": "系统设计",
     "term": "谁关注了我，我关注了谁，谁与我互相关注",
     "explanation": "数据库表该如何设计，索引怎么建。查询语句怎么写？",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 455,
@@ -2542,7 +2542,7 @@ FLASHCARD_DATA = [
     "category": "系统设计",
     "term": "问题 丢包、错包、乱包",
     "explanation": "高延迟 ：响应数据回来时间长，甚至大于客户端等待时间 带宽小 ：每次能够通信的内容较少， 数据包越大受影响可能越大 网络断续 ：网络经常断开又连接",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 464,
@@ -2584,14 +2584,14 @@ FLASHCARD_DATA = [
     "category": "系统设计",
     "term": "轮询扫描法 用一个Map<uid, last_packet_time>来记录每一个uid最近一次请求",
     "explanation": "ket_time 当某个用户uid有请求包来到，实时更新这个Map 启动一个timer，当Map中不为空时，轮询扫描这个Map，看每个uid的last_packet_time是否超过30s，如果超过则进行超时处理",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 470,
     "category": "系统设计",
     "term": "多timer触发法 用一个Map<uid, last_packet_time>来记录每一个uid最近",
     "explanation": "_packet_time 当某个用户uid有请求包来到，实时更新这个Map，并同时对这个uid请求包启动一个timer，30s之后触发 每个uid请求包对应的timer触发后，看Map中，查看这个uid的last_packet_time是否超过30s，如果超过则进行超时处理",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 471,
@@ -2605,7 +2605,7 @@ FLASHCARD_DATA = [
     "category": "系统设计",
     "term": "海量日志数据，提取出某日访问百度次数最多的那个IP",
     "explanation": "首先是找到这一天的日志，并且是访问百度的IP从日志中提取出来逐个写入大文件中，如果IP是32位的，最多可能有2^32次方种结果。 采用映射的方法，比如%1000，把大文件依次映射成1000个小文件，找出每个小文件中出现频率最多的IP，可以使用hashMap统计频率，依次找出每个文件中出现频率最大IP，一共1000个。然后在1000个IP中找出频率最大即为所求，可以使用归并或者小顶堆。",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 473,
@@ -2619,21 +2619,21 @@ FLASHCARD_DATA = [
     "category": "系统设计",
     "term": "有一个1G大小的一个文件，里面每一行是一个词，词的大小不超过16字节，内存限制大小是1M",
     "explanation": "返回频数最高的100个词？ 顺序读取文件，对于每个词采用hash%5000，映射到(x0,x1,……,x4999)，每个文件大约200KB，如果有文件大小超过1K就继续分治，直到所有文件大小都小于1M。对于每个小文件采用hashMap或者前缀树统计相应的词和频率。取出现频率最大的100个词，存入文件可以得到5000个文件，最后把5000个文件进行归并排序。",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 475,
     "category": "系统设计",
     "term": "海量数据分布在100台电脑中，想个办法高效统计出这批数据的TOP10",
     "explanation": "如果每个元素只出现一次并且出现在某一台机器上，可以在每台电脑上求TOP10，采用最大堆，然后求出每个电脑的TOP10之后将100个电脑的TOP组合起来得到1000条数据，再用大顶堆划分出TOP10。 如果同一元素重复出现在不同电脑中，可以遍历一遍所数据后hash取模，使同一元素只出现在一台电脑上。统计每个元素的TOP10，找出最后的TOP10。 或者直接暴力统计每个电脑各个元素出现的次数，把同一元素在不同电脑上次数相加，找出最终数据的TOP10。",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 476,
     "category": "系统设计",
     "term": "有10个文件，每个文件1G，每个文件的每一行存放的都是用户的查询，每个文件的查询都可能重复",
     "explanation": "要求你按照查询的频度排序？ 顺序读取10个文件，按照hash(query)%10的结果写入10个文件中，生成的新文件大小也是1G。找一个内存是2G的机器，依次对用hashMap(query, query_count)来统计每个query出现的次数。然后将排序好的query和count存储到文件中，得到10个已经排序的文件，最后对10个文件进行归并排序。",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 477,
@@ -2647,14 +2647,14 @@ FLASHCARD_DATA = [
     "category": "系统设计",
     "term": "在2.5亿个整数中找出不重复的整数，注，内存不足以容纳这2.5亿个整数",
     "explanation": "方案1 ：采用2比特位的位图，每个数分配2位，00表示这个数不存在，01表示出现一次，10表示出现多次，11无意义，共需要内存2^32*2 = 1G内存，扫描2.5亿个整数判断位图中是否存在，并调换对应的位，查看所有的01位并进行输出即可。 方案2 ：先把2.5亿个小文件进行划分，在小文件中找到不重复整数，并且排序，然后再归并。",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 479,
     "category": "系统设计",
     "term": "给40亿个不重复的unsigned int的整数，没排过序的，然后再给一个数，如何快速判断这个数是否",
     "explanation": "采用位图，申请512M内存，一位代表一个unsigned int，然后读入40亿数字，设置相应的bit位。读出要查询的数并且判段bit是否为1。",
-    "example": "详见 csview.cn"
+    "example": ""
   },
   {
     "id": 480,
@@ -2685,3 +2685,16 @@ def get_categories():
             cats[cat] = 0
         cats[cat] += 1
     return cats
+
+
+
+def _enrich_examples():
+    from utils.example_generator import generate_example
+    for card in FLASHCARD_DATA:
+        example = card.get("example", "")
+        if not example or len(str(example)) < 10:
+            gen = generate_example(card["term"], card.get("explanation", ""), card.get("category", ""))
+            card["example"] = gen["formatted"]
+
+
+_enrich_examples()

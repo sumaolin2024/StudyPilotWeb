@@ -1,9 +1,16 @@
 {% extends 'base.html' %}
-{% block title %}刷题 - StudyPilot Web{% endblock %}
+{% block title %}AI 刷题 – StudyPilot{% endblock %}
 {% block content %}
-<div class="mb-4">
+
+<div class="section-gap">
   <h2>AI 刷题</h2>
-  <p class="text-muted">输入课程名生成刷题。输入 <strong>八股文</strong> 使用 CSView 面试题库（34道）。</p>
+  <p class="text-muted" style="max-width:560px;">
+    {% if generated %}
+      {{ course }} · 共 <strong id="total-count">{{ questions|length }}</strong> 题
+    {% else %}
+      输入课程名即可生成题目。试试输入 <strong>八股文</strong>，使用内置 CS 面试题库。
+    {% endif %}
+  </p>
 </div>
 
 {% with messages = get_flashed_messages(with_categories=true) %}
@@ -16,41 +23,456 @@
 {% endif %}
 {% endwith %}
 
-<div class="card shadow-sm mb-4">
+{% if not generated %}
+<!-- 生成表单（未刷题时） -->
+<div class="card" style="max-width:480px;margin:0 auto;">
   <div class="card-body">
     <form method="POST">
       <div class="mb-3">
         <label class="form-label">课程名</label>
-        <input type="text" class="form-control" name="course" placeholder="输入 八股文 或其他课程名" value="八股文">
+        <input type="text" class="form-control" name="course"
+               placeholder="输入「八股文」或其他课程名"
+               value="八股文" autofocus>
       </div>
-      <button type="submit" class="btn btn-primary">生成刷题</button>
+      <button type="submit" class="btn btn-primary w-100">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" style="vertical-align:-2px;margin-right:5px;">
+          <polygon points="5 3 19 12 5 21 5 3"/>
+        </svg>
+        生成刷题
+      </button>
     </form>
   </div>
 </div>
+{% else %}
+<!-- 卡片式刷题交互区 -->
+<div id="quiz-app">
+  <!-- 进度条 -->
+  <div class="quiz-progress">
+    <span class="quiz-progress-text" id="progress-label">1 / {{ questions|length }}</span>
+    <div class="progress flex-grow-1" style="height:4px;">
+      <div class="progress-bar" id="progress-bar" style="width:0%"></div>
+    </div>
+  </div>
 
-<div class="card shadow-sm">
-  <div class="card-header">刷题输出</div>
-  <div class="card-body">
-    <pre class="bg-light p-3 rounded" style="max-height: 500px; overflow-y: auto; white-space: pre-wrap; font-size: 0.9rem;" id="quiz-output">
-提交课程名后，刷题内容将在此显示。
-    </pre>
+  <!-- 题目卡片 -->
+  <div class="quiz-card-wrapper" id="card-wrapper">
+    <div class="quiz-card" id="quiz-card" onclick="flipQuizCard()">
+      <div class="quiz-card-inner" id="card-inner">
+        <!-- 正面 -->
+        <div class="quiz-card-front">
+          <span class="quiz-type-badge" id="type-badge"></span>
+          <div class="quiz-question" id="question-text"></div>
+          <div class="quiz-options" id="options-area"></div>
+          <div class="quiz-hint">点击卡片查看答案</div>
+        </div>
+        <!-- 背面 -->
+        <div class="quiz-card-back">
+          <span class="quiz-type-badge answer-badge">答案</span>
+          <div class="quiz-answer-label">正确答案</div>
+          <div class="quiz-answer" id="answer-text"></div>
+          <div class="quiz-answer-hint">点击卡片返回题目</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 翻题按钮 -->
+  <div class="quiz-nav">
+    <button class="quiz-nav-btn prev" id="btn-prev" onclick="prevQuestion()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+      上一题
+    </button>
+    <span class="quiz-nav-current" id="nav-current">1 / {{ questions|length }}</span>
+    <button class="quiz-nav-btn next" id="btn-next" onclick="nextQuestion()">
+      下一题
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 6 15 12 9 18"/></svg>
+    </button>
   </div>
 </div>
 
-<script>
-  // Fetch quiz_output.txt content
-  async function loadQuiz() {
-    try {
-      const resp = await fetch('/static/../quiz_output.txt');
-      if (resp.ok) {
-        const text = await resp.text();
-        document.getElementById('quiz-output').textContent = text;
-      }
-    } catch(e) {}
+<!-- 重新生成 -->
+<div class="text-center mt-4">
+  <a href="{{ url_for('quiz') }}" class="btn btn-sm btn-outline-secondary">重新生成</a>
+</div>
+{% endif %}
+
+{% if generated %}
+<style>
+/* ========== 刷题卡片系统 ========== */
+#quiz-app {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* 进度条区域 */
+.quiz-progress {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+.quiz-progress-text {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  min-width: 52px;
+  letter-spacing: 0.02em;
+}
+
+/* 卡片容器 */
+.quiz-card-wrapper {
+  perspective: 1200px;
+  margin-bottom: 1.5rem;
+}
+
+/* 卡片 */
+.quiz-card {
+  width: 100%;
+  min-height: 320px;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.quiz-card:hover {
+  transform: translateY(-2px);
+}
+.quiz-card-inner {
+  position: relative;
+  width: 100%;
+  min-height: 320px;
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-style: preserve-3d;
+}
+.quiz-card.flipped .quiz-card-inner {
+  transform: rotateY(180deg);
+}
+
+/* 正面 / 背面共用 */
+.quiz-card-front,
+.quiz-card-back {
+  position: absolute;
+  width: 100%;
+  min-height: 320px;
+  backface-visibility: hidden;
+  border-radius: 16px;
+  padding: 2rem 2rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-md);
+}
+
+/* 正面 */
+.quiz-card-front {
+  z-index: 2;
+}
+
+/* 背面 */
+.quiz-card-back {
+  transform: rotateY(180deg);
+  justify-content: center;
+  background: #f9fafb;
+  border-color: #d1d5db;
+}
+
+/* 题型标签 */
+.quiz-type-badge {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 0.25em 0.75em;
+  border-radius: 100px;
+  margin-bottom: 1rem;
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+}
+.answer-badge {
+  background: #ecfdf5;
+  color: var(--color-success);
+}
+
+/* 题目文字 */
+.quiz-question {
+  font-size: 1.3rem;
+  font-weight: 600;
+  line-height: 1.55;
+  color: var(--color-text);
+  max-width: 460px;
+  margin-bottom: 1rem;
+}
+
+/* 选项区域 */
+.quiz-options {
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+.quiz-option {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.65rem 0.9rem;
+  border-radius: 10px;
+  border: 1px solid var(--color-border);
+  background: #fafafa;
+  text-align: left;
+  font-size: 0.9rem;
+  color: var(--color-text);
+  transition: background 0.15s;
+}
+.quiz-option:hover {
+  background: #f0f0f5;
+}
+.quiz-option .opt-label {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: #eef2ff;
+  color: var(--color-primary);
+  font-weight: 600;
+  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 提示文字 */
+.quiz-hint {
+  font-size: 0.78rem;
+  color: var(--color-text-light);
+  margin-top: auto;
+  padding-top: 0.75rem;
+}
+
+/* 背面答案 */
+.quiz-answer-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-text-light);
+  margin-bottom: 0.5rem;
+}
+.quiz-answer {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--color-success);
+  max-width: 460px;
+  line-height: 1.5;
+}
+.quiz-answer-hint {
+  font-size: 0.78rem;
+  color: var(--color-text-light);
+  margin-top: auto;
+  padding-top: 0.75rem;
+}
+
+/* 导航按钮 */
+.quiz-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.quiz-nav-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.quiz-nav-btn:hover {
+  background: #f3f4f6;
+  border-color: #c4c7cc;
+}
+.quiz-nav-btn:active {
+  transform: scale(0.97);
+}
+.quiz-nav-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+.quiz-nav-btn:disabled:hover {
+  background: var(--color-surface);
+  border-color: var(--color-border);
+}
+.quiz-nav-current {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+
+/* 判断题额外样式 */
+.quiz-judge-options {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+.quiz-judge-opt {
+  width: 64px;
+  height: 64px;
+  border-radius: 14px;
+  border: 2px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--color-text-muted);
+  background: #fafafa;
+}
+.quiz-judge-opt.correct {
+  border-color: var(--color-success);
+  background: #ecfdf5;
+  color: var(--color-success);
+}
+.quiz-judge-opt.wrong {
+  border-color: var(--color-danger);
+  background: #fef2f2;
+  color: var(--color-danger);
+}
+
+/* 响应式 */
+@media (max-width: 640px) {
+  .quiz-card-front, .quiz-card-back {
+    padding: 1.5rem 1.25rem 1.25rem;
+    min-height: 280px;
   }
-  // Try loading on page load
-  window.addEventListener('load', () => {
-    setTimeout(loadQuiz, 500);
-  });
+  .quiz-question {
+    font-size: 1.1rem;
+  }
+  .quiz-answer {
+    font-size: 1.15rem;
+  }
+  .quiz-card {
+    min-height: 280px;
+  }
+  .quiz-card-inner {
+    min-height: 280px;
+  }
+}
+</style>
+
+<script>
+// ========== 刷题数据 & 交互逻辑 ==========
+const questions = {{ questions_json | default('[]') | safe }};
+const total = questions.length;
+let currentIndex = 0;
+let isFlipped = false;
+
+// DOM 引用
+const card = document.getElementById('quiz-card');
+const cardInner = document.getElementById('card-inner');
+const questionText = document.getElementById('question-text');
+const optionsArea = document.getElementById('options-area');
+const typeBadge = document.getElementById('type-badge');
+const answerText = document.getElementById('answer-text');
+const progressLabel = document.getElementById('progress-label');
+const progressBar = document.getElementById('progress-bar');
+const navCurrent = document.getElementById('nav-current');
+const btnPrev = document.getElementById('btn-prev');
+const btnNext = document.getElementById('btn-next');
+const totalCount = document.getElementById('total-count');
+if (totalCount) totalCount.textContent = total;
+
+function loadQuestion(index) {
+  const q = questions[index];
+  // Reset flip
+  card.classList.remove('flipped');
+  isFlipped = false;
+
+  // Type badge
+  const typeNames = { choice: '选择题', judge: '判断题', fill: '填空题' };
+  typeBadge.textContent = typeNames[q.type] || q.type;
+
+  // Question text
+  questionText.textContent = q.question;
+
+  // Options area
+  if (q.type === 'choice') {
+    const labels = ['A', 'B', 'C', 'D'];
+    optionsArea.innerHTML = q.options.map((opt, i) =>
+      '<div class="quiz-option"><span class="opt-label">' + labels[i] + '</span><span>' + escapeHtml(opt) + '</span></div>'
+    ).join('');
+    optionsArea.className = 'quiz-options';
+  } else if (q.type === 'judge') {
+    optionsArea.innerHTML =
+      '<div class="quiz-judge-options">' +
+      '<div class="quiz-judge-opt correct">✓</div>' +
+      '<div class="quiz-judge-opt wrong">✗</div>' +
+      '</div>';
+    optionsArea.className = 'quiz-options';
+  } else {
+    optionsArea.innerHTML = '';
+    optionsArea.className = '';
+  }
+
+  // Answer (loaded but shown on flip)
+  answerText.textContent = q.answer;
+
+  // Update nav
+  progressLabel.textContent = (index + 1) + ' / ' + total;
+  navCurrent.textContent = (index + 1) + ' / ' + total;
+  progressBar.style.width = ((index + 1) / total * 100).toFixed(0) + '%';
+
+  // Button states
+  btnPrev.disabled = index === 0;
+  btnNext.disabled = index === total - 1;
+}
+
+function flipQuizCard() {
+  isFlipped = !isFlipped;
+  if (isFlipped) {
+    card.classList.add('flipped');
+  } else {
+    card.classList.remove('flipped');
+  }
+}
+
+function prevQuestion() {
+  if (currentIndex > 0) {
+    currentIndex--;
+    loadQuestion(currentIndex);
+  }
+}
+
+function nextQuestion() {
+  if (currentIndex < total - 1) {
+    currentIndex++;
+    loadQuestion(currentIndex);
+  }
+}
+
+// Keyboard navigation
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'ArrowLeft') { e.preventDefault(); prevQuestion(); }
+  if (e.key === 'ArrowRight') { e.preventDefault(); nextQuestion(); }
+  if (e.key === ' ' || e.key === 'Spacebar') { e.preventDefault(); flipQuizCard(); }
+});
+
+function escapeHtml(text) {
+  var d = document.createElement('div');
+  d.textContent = text;
+  return d.innerHTML;
+}
+
+// Init
+loadQuestion(0);
 </script>
+{% endif %}
 {% endblock %}
