@@ -18,20 +18,10 @@ def login():
 def register():
     return render_template("register.html")
 
-# 任务页
-@app.route("/tasks")
-def tasks():
-    return render_template("tasks.html")
-
 # 刷题页
 @app.route("/quiz")
 def quiz():
     return render_template("quiz.html")
-
-# 统计页
-@app.route("/statistics")
-def statistics():
-    return render_template("statistics.html")
 
 # 背诵卡片页
 @app.route("/flashcard")

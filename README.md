@@ -1,12 +1,10 @@
 # StudyPilot Web
 
-基于 Flask 的大学生学管理 Web 平台，支持任务管理、AI 刷题、学习统计与 CS 八股文背诵卡片。
+基于 Flask 的大学生学管理 Web 平台，支持 AI 刷题与 CS 八股文背诵卡片。
 
 ## 功能
 
-- **任务管理**：添加/删除/标记完成学任务
 - **AI 刷题**：输入课程名生成选择题、判断题、填空题
-- **学统计**：任务完成率与刷题成绩可视化
 - **背诵卡片**：35张 CS 八股文卡片，6大领域，点击翻转查看解释
 
 ## 背诵卡片模块
@@ -47,14 +45,14 @@ StudyPilotWeb/
 │   ├── flashcard.py        # 背诵卡片数据
 │   ├── db.py               # 数据库
 │   ├── quiz_generator.py   # 刷题生成
-│   └── stats.py            # 统计
+│   └── auth.py             # 认证
 ├── routes/                 # 路由蓝图
 ├── templates/              # Jinja2 模板
 │   ├── base.html           # 基础布局
 │   ├── index.html          # 首页
 │   ├── flashcard.html      # 背诵卡片页
-│   ├── tasks.html          # 任务页
 │   ├── quiz.html           # 刷题页
-│   └── stats.html          # 统计页
+│   ├── login.html          # 登录页
+│   └── register.html       # 注册页
 └── static/                 # 静态资源
 ```

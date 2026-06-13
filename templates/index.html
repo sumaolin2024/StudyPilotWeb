@@ -3,23 +3,14 @@
 {% block content %}
 <div class="text-center py-5">
   <h1 class="display-5">欢迎来到 StudyPilot Web</h1>
-  <p class="lead">基于 Flask 的大学生学管理平台，支持任务管理、AI 刷题、学习统计与 CS 八股文背诵卡片。</p>
+  <p class="lead">基于 Flask 的大学生学管理平台，支持 AI 刷题与 CS 八股文背诵卡片。</p>
   <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
-    <a class="btn btn-primary btn-lg" href="{{ url_for('tasks') }}">管理任务</a>
     <a class="btn btn-outline-primary btn-lg" href="{{ url_for('quiz') }}">开始刷题</a>
     <a class="btn btn-success btn-lg" href="{{ url_for('flashcard') }}">背诵卡片</a>
   </div>
 </div>
 <div class="row gy-4">
-  <div class="col-md-3">
-    <div class="card shadow-sm h-100">
-      <div class="card-body text-center">
-        <h5 class="card-title">任务系统</h5>
-        <p class="card-text">添加学任务、标记完成、删除任务，帮你安排日常学。</p>
-      </div>
-    </div>
-  </div>
-  <div class="col-md-3">
+  <div class="col-md-6">
     <div class="card shadow-sm h-100">
       <div class="card-body text-center">
         <h5 class="card-title">AI 刷题</h5>
@@ -27,19 +18,11 @@
       </div>
     </div>
   </div>
-  <div class="col-md-3">
-    <div class="card shadow-sm h-100">
-      <div class="card-body text-center">
-        <h5 class="card-title">学统计</h5>
-        <p class="card-text">通过图表查看任务完成率与刷题成绩，形成学趋势分析。</p>
-      </div>
-    </div>
-  </div>
-  <div class="col-md-3">
+  <div class="col-md-6">
     <div class="card shadow-sm h-100">
       <div class="card-body text-center">
         <h5 class="card-title">背诵卡片</h5>
-        <p class="card-text">35张 CS 八股文卡片，覆盖6大领域，点击翻转查看解释。</p>
+        <p class="card-text">35张 CS 八股文卡片，覆盖6大领域，点击翻转查看解释与举例。</p>
       </div>
     </div>
   </div>
