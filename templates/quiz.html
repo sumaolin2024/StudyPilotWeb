@@ -1,76 +1,56 @@
 {% extends 'base.html' %}
-{% block title %}AI 刷题 - StudyPilot Web{% endblock %}
+{% block title %}刷题 - StudyPilot Web{% endblock %}
 {% block content %}
-<div class="row">
-  <div class="col-lg-8 mx-auto">
-    <div class="card shadow-sm mb-4">
-      <div class="card-body">
-        <h3 class="card-title mb-3">AI 刷题系统</h3>
-        {% if not generated and not results %}
-        <form method="post" class="mb-4">
-          <input type="hidden" name="mode" value="generate">
-          <div class="mb-3">
-            <label for="subject" class="form-label">课程名称</label>
-            <input type="text" class="form-control" id="subject" name="subject" placeholder="例如：高等数学" required>
-          </div>
-          <button type="submit" class="btn btn-primary">生成题目</button>
-        </form>
-        {% endif %}
+<div class="mb-4">
+  <h2>AI 刷题</h2>
+  <p class="text-muted">输入课程名生成刷题。输入 <strong>八股文</strong> 使用 CSView 面试题库（34道）。</p>
+</div>
 
-        {% if generated %}
-        <form method="post">
-          <input type="hidden" name="mode" value="submit">
-          <input type="hidden" name="subject" value="{{ subject }}">
-          <input type="hidden" name="questions" value='{{ serialized|tojson|safe }}'>
-          <h5 class="mb-3">{{ subject }} 题目</h5>
-          {% for question in questions %}
-          <div class="mb-4">
-            <p class="mb-2"><strong>{{ loop.index }}. {{ question.prompt }}</strong></p>
-            {% if question.type == 'choice' %}
-            {% for option in question.options %}
-            <div class="form-check">
-              <input class="form-check-input" type="radio" name="answer_{{ loop.parent.index }}" id="option_{{ loop.parent.index }}_{{ loop.index }}" value="{{ option }}" required>
-              <label class="form-check-label" for="option_{{ loop.parent.index }}_{{ loop.index }}">{{ option }}</label>
-            </div>
-            {% endfor %}
-            {% elif question.type == 'judge' %}
-            <div class="form-check">
-              <input class="form-check-input" type="radio" name="answer_{{ loop.index }}" id="judge_true_{{ loop.index }}" value="正确" required>
-              <label class="form-check-label" for="judge_true_{{ loop.index }}">正确</label>
-            </div>
-            <div class="form-check">
-              <input class="form-check-input" type="radio" name="answer_{{ loop.index }}" id="judge_false_{{ loop.index }}" value="错误" required>
-              <label class="form-check-label" for="judge_false_{{ loop.index }}">错误</label>
-            </div>
-            {% else %}
-            <input type="text" class="form-control" name="answer_{{ loop.index }}" required>
-            {% endif %}
-          </div>
-          {% endfor %}
-          <button type="submit" class="btn btn-success">提交答案</button>
-        </form>
-        {% endif %}
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+<div class="mb-3">
+  {% for category, message in messages %}
+  <div class="alert alert-{{ category }}">{{ message }}</div>
+  {% endfor %}
+</div>
+{% endif %}
+{% endwith %}
 
-        {% if results %}
-        <div class="alert alert-info">您的得分：{{ score }} / {{ total }}</div>
-        <div class="list-group">
-          {% for item in results %}
-          <div class="list-group-item">
-            <div class="d-flex justify-content-between">
-              <strong>{{ item.index }}. {{ item.prompt }}</strong>
-              <span class="badge bg-{{ 'success' if item.passed else 'danger' }}">{{ '正确' if item.passed else '错误' }}</span>
-            </div>
-            <div class="mt-2">
-              <div>您的答案：{{ item.user_answer }}</div>
-              <div>标准答案：{{ item.correct_answer }}</div>
-            </div>
-          </div>
-          {% endfor %}
-        </div>
-        <a href="{{ url_for('quiz.quiz') }}" class="btn btn-primary mt-4">继续刷题</a>
-        {% endif %}
+<div class="card shadow-sm mb-4">
+  <div class="card-body">
+    <form method="POST">
+      <div class="mb-3">
+        <label class="form-label">课程名</label>
+        <input type="text" class="form-control" name="course" placeholder="输入 八股文 或其他课程名" value="八股文">
       </div>
-    </div>
+      <button type="submit" class="btn btn-primary">生成刷题</button>
+    </form>
   </div>
 </div>
+
+<div class="card shadow-sm">
+  <div class="card-header">刷题输出</div>
+  <div class="card-body">
+    <pre class="bg-light p-3 rounded" style="max-height: 500px; overflow-y: auto; white-space: pre-wrap; font-size: 0.9rem;" id="quiz-output">
+提交课程名后，刷题内容将在此显示。
+    </pre>
+  </div>
+</div>
+
+<script>
+  // Fetch quiz_output.txt content
+  async function loadQuiz() {
+    try {
+      const resp = await fetch('/static/../quiz_output.txt');
+      if (resp.ok) {
+        const text = await resp.text();
+        document.getElementById('quiz-output').textContent = text;
+      }
+    } catch(e) {}
+  }
+  // Try loading on page load
+  window.addEventListener('load', () => {
+    setTimeout(loadQuiz, 500);
+  });
+</script>
 {% endblock %}
